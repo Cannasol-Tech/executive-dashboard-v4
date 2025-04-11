@@ -29,6 +29,10 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
+*build*
+
+.dart_tool/
+
 # nyc test coverage
 .nyc_output
 

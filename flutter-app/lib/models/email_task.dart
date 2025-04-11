@@ -1,8 +1,8 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Status of a task in the system
+/**
+ * Status of a task in the system
+ */
 enum TaskStatus {
   todo, // Task is open and not started
   inProgress, // Task is currently being worked on
