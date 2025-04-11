@@ -54,15 +54,13 @@ class _EmailInboxScreenState extends State<EmailInboxScreen>
       } else {
         _animationController.reverse();
         _searchController.clear();
-        Provider.of<EmailProvider>(context, listen: false)
-            .setSearchQuery('');
+        Provider.of<EmailProvider>(context, listen: false).setSearchQuery('');
       }
     });
   }
 
   void _performSearch(String query) {
-    Provider.of<EmailProvider>(context, listen: false)
-        .setSearchQuery(query);
+    Provider.of<EmailProvider>(context, listen: false).setSearchQuery(query);
   }
 
   @override
@@ -118,7 +116,13 @@ class _EmailInboxScreenState extends State<EmailInboxScreen>
                   emailProvider.clearSelectedEmails();
                 },
               )
-            : null,
+            : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  'assets/icn/cannasol-logo.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
         actions: [
           // Search icon button
           if (!hasSelection && !_isSearchVisible)
