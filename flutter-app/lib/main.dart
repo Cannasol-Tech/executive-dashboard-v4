@@ -7,10 +7,12 @@ import 'firebase_options.dart';
 import 'core/providers/auth_provider.dart';
 import 'core/providers/dashboard_summary_provider.dart';
 import 'core/providers/analysis_data_provider.dart';
+import 'core/providers/email_provider.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/analysis/screens/analysis_screen.dart';
+import 'features/email/screens/email_inbox_screen.dart';
 import 'features/shared/screens/coming_soon_screen.dart';
 import 'services/secure_storage_service.dart';
 
@@ -61,6 +63,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => DashboardSummaryProvider()),
         ChangeNotifierProvider(create: (_) => AnalysisDataProvider()),
+        ChangeNotifierProvider(create: (_) => EmailProvider()),
       ],
       child: Consumer<AuthProvider>(
         builder: (context, authProvider, _) {
@@ -77,8 +80,7 @@ class MyApp extends StatelessWidget {
               '/register': (context) => const RegisterScreen(),
               '/dashboard': (context) => const DashboardScreen(),
               '/analysis': (context) => const AnalysisScreen(),
-              '/email': (context) =>
-                  const ComingSoonScreen(featureName: 'Email Management'),
+              '/email': (context) => const EmailInboxScreen(),
               '/chat': (context) =>
                   const ComingSoonScreen(featureName: 'Chat Interface'),
               '/documents': (context) =>
