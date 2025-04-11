@@ -60,7 +60,7 @@ class EmailActionsPanel extends StatelessWidget {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.errorColor,
+                      backgroundColor: AppTheme.errorRuby,
                       foregroundColor: Colors.white,
                     ),
                     child: const Text('Mark as Spam'),
@@ -100,7 +100,7 @@ class EmailActionsPanel extends StatelessWidget {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.errorColor,
+                      backgroundColor: AppTheme.errorRuby,
                       foregroundColor: Colors.white,
                     ),
                     child: const Text('Delete'),
@@ -127,7 +127,36 @@ class EmailActionsPanel extends StatelessWidget {
     required String tooltip,
     required VoidCallback onPressed,
   }) {
-    // ...existing code...
-    return Container(); // temporary implementation, replace with your own widget
+    return Tooltip(
+      message: tooltip,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: TextButton.icon(
+          icon: Icon(
+            icon,
+            size: 20,
+            color: AppTheme.moonlight,
+          ),
+          label: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              color: AppTheme.moonlight,
+            ),
+          ),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 8.0,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            backgroundColor: AppTheme.obsidian.withOpacity(0.3),
+          ),
+          onPressed: onPressed,
+        ),
+      ),
+    );
   }
 }

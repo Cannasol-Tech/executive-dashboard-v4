@@ -39,7 +39,8 @@ class AppTheme {
   static const Color successEmerald = Color(0xFF10B981);
   static const Color warningAmber = Color(0xFFF59E0B);
   static const Color infoSapphire = Color(0xFF3B82F6);
-  static const Color errorRuby = Color(0xFFEF4444); // Added to match design system
+  static const Color errorRuby =
+      Color(0xFFEF4444); // Added to match design system
 
   // Gradient Definitions
   static const LinearGradient premiumBrand = LinearGradient(
