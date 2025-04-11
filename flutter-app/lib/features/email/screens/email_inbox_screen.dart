@@ -5,7 +5,6 @@ import '../../../core/providers/email_provider.dart';
 import '../widgets/email_actions_panel.dart';
 import '../../../models/email.dart';
 import '../widgets/email_list_item.dart';
-import '../screens/email_detail_screen.dart';
 
 class EmailInboxScreen extends StatefulWidget {
   const EmailInboxScreen({super.key});
@@ -32,11 +31,10 @@ class _EmailInboxScreenState extends State<EmailInboxScreen>
       duration: const Duration(milliseconds: 300),
     );
 
-    // Generate sample data if needed for development and testing
-    // Uncomment this to generate sample data
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Provider.of<EmailProvider>(context, listen: false).generateSampleData(15);
-    // });
+    // Initialize email data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<EmailProvider>(context, listen: false).initialize();
+    });
   }
 
   @override
@@ -57,14 +55,14 @@ class _EmailInboxScreenState extends State<EmailInboxScreen>
         _animationController.reverse();
         _searchController.clear();
         Provider.of<EmailProvider>(context, listen: false)
-            .setFilters(searchQuery: '');
+            .setSearchQuery('');
       }
     });
   }
 
   void _performSearch(String query) {
     Provider.of<EmailProvider>(context, listen: false)
-        .setFilters(searchQuery: query);
+        .setSearchQuery(query);
   }
 
   @override
@@ -146,31 +144,21 @@ class _EmailInboxScreenState extends State<EmailInboxScreen>
                   case 'responded':
                   case 'approved':
                   case 'rejected':
-                    emailProvider.setFilters(
-                        statusFilter:
-                            value == emailProvider.statusFilter ? null : value);
+                    emailProvider.setStatusFilter(
+                        value == emailProvider.statusFilter ? null : value);
                     break;
                   case 'high_priority':
-                    emailProvider.setFilters(
-                        priorityFilter:
-                            emailProvider.priorityFilter == 1 ? null : 1);
+                    emailProvider.setPriorityFilter(
+                        emailProvider.priorityFilter == 1 ? null : 1);
                     break;
                   case 'show_archived':
-                    emailProvider.setFilters(
-                        includeArchived: !emailProvider.includeArchived);
+                    emailProvider.toggleIncludeArchived();
                     break;
                   case 'show_spam':
-                    emailProvider.setFilters(
-                        includeSpam: !emailProvider.includeSpam);
+                    emailProvider.toggleIncludeSpam();
                     break;
                   case 'clear_filters':
-                    emailProvider.setFilters(
-                      includeArchived: false,
-                      includeSpam: false,
-                      statusFilter: null,
-                      priorityFilter: null,
-                      searchQuery: '',
-                    );
+                    emailProvider.clearFilters();
                     break;
                 }
               },
@@ -373,13 +361,13 @@ class _EmailInboxScreenState extends State<EmailInboxScreen>
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.errorColor.withOpacity(0.1),
+                color: AppTheme.errorRuby.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.error_outline,
                 size: 48,
-                color: AppTheme.errorColor,
+                color: AppTheme.errorRuby,
               ),
             ),
             const SizedBox(height: 24),
@@ -497,22 +485,18 @@ class _EmailInboxScreenState extends State<EmailInboxScreen>
         final isSelected = provider.selectedEmailIds.contains(email.id);
 
         return EmailListItem(
+          key: ValueKey(email.id),
           email: email,
           isSelected: isSelected,
           onSelect: (selected) {
             provider.toggleEmailSelection(email.id);
           },
           onTap: () {
+            // With our new expandable design, we don't need to navigate to a separate screen
+            // The email details are shown inline when the item is expanded
             if (provider.selectedEmailIds.isNotEmpty) {
               // If in selection mode, toggle selection
               provider.toggleEmailSelection(email.id);
-            } else {
-              // Otherwise navigate to detail screen
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => EmailDetailScreen(emailId: email.id),
-                ),
-              );
             }
           },
           isSmallScreen: isSmallScreen,
