@@ -1,1 +1,0 @@
- build/web/manifest.json:  /Users/Stephen/Documents/GitHub/cannasol-technologies/executive-dashboard/flutter-app/web/index.html /Users/Stephen/Documents/GitHub/cannasol-technologies/executive-dashboard/flutter-app/web/manifest.json
