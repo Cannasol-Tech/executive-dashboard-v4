@@ -7,10 +7,39 @@ yarn-error.log*
 firebase-debug.log*
 firebase-debug.*.log*
 
-# Firebase cache
-.firebase/
+# Dart/Flutter related
+.dart_tool/
+.flutter-plugins/
+.flutter-plugins-dependencies
+.packages
+.metadata
+.DS_Store
 
-# Firebase config
+# Flutter app specific
+flutter-app/.dart_tool/
+flutter-app/.dart/
+flutter-app/.packages
+flutter-app/.metadata
+flutter-app/.flutter-plugins
+flutter-app/.flutter-plugins-dependencies
+flutter-app/.idea/
+flutter-app/.DS_Store
+
+# Build outputs
+build/
+flutter-app/build/
+
+# Firebase related
+.firebase/
+flutter-app/.firebase/
+flutter-app/firebase.json
+flutter-app/.firebaserc
+
+# Editor directories
+.vscode/
+
+# Project specific
+axovia-ai/
 
 # Uncomment this if you'd like others to create their own Firebase project.
 # For a team working on the same Firebase project(s), it is recommended to leave
