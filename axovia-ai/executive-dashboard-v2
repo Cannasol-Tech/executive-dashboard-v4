@@ -1,0 +1,82 @@
+Can you generate copies of all of the files in the project knowledge for an exectuive dashboard for the CEO of cannasol technologies? 
+
+**Account information:**
+    1. **Github:** 
+       - https://github.com/CannasolTechnologies/executive-dashboard
+    2. **Email Manager:**
+       - Google Cloud Project ID: axovia-mail
+       - Should be the first functionality that we implement fully. 
+       - This tab will connect to my AI Agentic email-management system. 
+       - This should lead to a screen wehre there is one row for each email that josh has an action item from.
+    3. **Interactive AI Agent Messaging Interface**
+        - Google Cloud Project ID: This agentic system will also be managed externally in my DisAggregated Cloud Architecture
+        - Google Cloud Project ID: axovia-sandbox
+        - I'm thinkking the text-box where the user interfaces with this agent should actually take up most of the rest of the page.  Probably with some analytical data about everything we have implemented some day.
+        -  This agent's functionality will grow to where he eventually will know a lot about Nano Emulsion  Technolog but it will be cool
+    4.  **SEO Analyzer / Optimizer**
+        - This tab should open up to a  
+
+
+**Technical Stack:**
+   - **Front End:**
+      - Flutter mixed with TypeScript where necessary 
+      - Web app should be implemented first, then mobile platforms after we have a working web application
+   - **Backend:** 
+      - Google Cloud Functions - Serverless functions written in python
+      - Google Cloud Deploy - For hosting containerized python flask servers if necessary
+      - Google Firebase Databases ( Firestore or RTDB )
+   - **Everything Else:**
+      - Up to you, but please ask first!
+
+**Side Panel Elements**
+   1.  **- Home**
+      - 
+
+
+
+## Expected functionality
+   1. **`Executive Dashboard`** Web Application where the CEO of cannasol can interact with different AI Agentic Systems I am working on through the cloud that will be handling different things for him. 
+
+       - The dashboard should be modern, sleek, and beautifully designed
+       - It should have display panels / cards that can display various analytical data about the AI Agentic Systems or other company data.  ( Information about orders or anything at all. 
+
+       -  The cards should be shown at different sizes and displaying different types of data to ensure correct reactive sizing and functioanlity. 
+
+       - The dashboard should have a reactive user interface so that no matter the amount of cards, they always look good. (gridview, or something similar)
+
+       - The Companies colors are blue and green, I was thinking we should make the dash board a dark blue and dark green with some lighter accent colors as a default them.
+       - The colors for the theme.
+         - (primary, secondary, ..etc) should be configurable and saveable so that a user with an account can switch between preset themes they have saved.
+       - I want this Web Application to really look good, implement color gradients, shadowing and animations where you can to really make it shine!
+       - The Web Application should look so aesthetically good that a person will want to keep looking at it and it will make them feel nice while they are working. 
+
+## 
+
+
+##Features to implement 
+* Main Dashboard page - Should have cards that can display analytical information about the company.  This could come in the form of text, graphs, charts ..etc.  Use gridview for adaptive design? 
+* Side Panel - A navigation bar between different screens
+   *Screens: 
+      * Home
+      *Emails ( Content will be available in Firebase DB by my email AI Agent ) 
+         * Email content
+         * AI Generated Response ( will be available in firebase DB from my AI Agent )
+         * Ability for CEO to approve or edit the response
+         * Task list generated from the AI from the content of the email
+         * A way for the CEO to approve the task list, remove tasks, and add new tasks.
+      *Chat bot
+         * An interface that directly interacts with an AI Agent that will have a REST endpoint for communication ( This will be provided later just use a dummy endpoint )
+      *SEO 
+         * Contains information about SEO And Google Ads
+         * Contains configuration for modifying SEO parameters for our website
+      *Company Blog 
+         * Contains Context about our company blog 
+         * A box where the CEO Can enter content Ideas that Will be supplied to an AI Agent through Firebase Realtime database (The AI Agent will be monitoring the path that these are placed at)
+         * An overview of the current operations of the blog 
+         * A way to control post frequency and content ideas (show scheduled blog posts, etc..) 
+      *Settings 
+         * Ability to control color theme (Default will be dark blue and dark green as primary and secondary) 
+         * The user should be able to control these and save custom color profiles. 
+   *Login Dialog
+      * Pop up box that prompts a login  ( implement this last )
+      * We should use google authentication through Firebase

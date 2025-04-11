@@ -1,0 +1,47 @@
+{
+   "checksum": "790fe3c9f0145bc8a0a08a0854cdf8fa",
+   "roots": {
+      "bookmark_bar": {
+         "children": [  ],
+         "date_added": "13388790259206606",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+         "id": "1",
+         "name": "Bookmarks Bar",
+         "type": "folder"
+      },
+      "other": {
+         "children": [ {
+            "date_added": "13388790731597596",
+            "date_last_used": "0",
+            "guid": "0ba75458-d023-455e-bba4-e6905c2b4904",
+            "id": "5",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Cannasol Executive Dashboard",
+            "type": "url",
+            "url": "http://localhost:57889/#/login"
+         } ],
+         "date_added": "13388790259206606",
+         "date_last_used": "0",
+         "date_modified": "13388790731597596",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+         "id": "2",
+         "name": "Other Bookmarks",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13388790259206608",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+         "id": "3",
+         "name": "Mobile Bookmarks",
+         "type": "folder"
+      }
+   },
+   "version": 1
+}

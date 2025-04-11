@@ -1,0 +1,35 @@
+{
+    "name": "Cannasol Executive Dashboard",
+    "short_name": "Cannasol Dashboard",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0A192F",
+    "theme_color": "#26D07C",
+    "description": "Cannasol Technologies Executive Dashboard for business intelligence.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+} 
