@@ -1,10 +1,10 @@
 import 'package:executive_dashboard/config/app_theme.dart';
-import 'package:executive_dashboard/features/document_generator/%20providers/document_generator_provider.dart';
+// import 'package:executive_dashboard/features/document_generator/%20providers/document_generator_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../ providers/document_generator_provider.dart';
 import '../models/document_request.dart';
 import '../../auth/models/user_model.dart';
-import '../providers/document_generator_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../widgets/document_request_form.dart';
 import '../widgets/document_status_tracker.dart';
@@ -191,8 +191,8 @@ class _DocumentsScreenState extends State<DocumentsScreen>
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        if (provider.errorMessage != null)
-          _buildErrorMessage(context, provider.errorMessage!, provider),
+        if (provider.hasError && provider.errorMessage.isNotEmpty)
+          _buildErrorMessage(context, provider.errorMessage, provider),
         Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -323,6 +323,7 @@ class _DocumentsScreenState extends State<DocumentsScreen>
       case DocumentRequestStatus.completed:
         backgroundColor = AppTheme.successEmerald;
         textColor = AppTheme.textPrimaryColor;
+        label = 'Completed';
         break;
       case DocumentRequestStatus.failed:
         backgroundColor = AppTheme.errorRuby;
@@ -401,8 +402,8 @@ class _DocumentsScreenState extends State<DocumentsScreen>
       ),
       child: CircleAvatar(
         backgroundImage:
-            user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-        child: user.photoURL == null ? Text(user.displayName[0]) : null,
+            user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
+        child: user.photoUrl == null ? Text(user.displayName[0]) : null,
       ),
       itemBuilder: (context) => [
         PopupMenuItem(

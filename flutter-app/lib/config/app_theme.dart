@@ -41,6 +41,8 @@ class AppTheme {
   static const Color infoSapphire = Color(0xFF3B82F6);
   static const Color errorRuby = Color(0xFFEF4444); // Add
 
+  static const Color errorCrimson = Color(0xFFDC2626);
+  
   static const Color borderSubtle = Color(0xFFE5E7EB);
   static const Color borderStrong = Color(0xFF374151);
   static const Color borderDisabled = Color(0xFF9CA3AF);

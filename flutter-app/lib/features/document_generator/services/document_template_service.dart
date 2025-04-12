@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import '../../models/document_template.dart';
+import '../models/document_template.dart';
 
 /// Service for managing document templates in Firestore.
 class DocumentTemplateService {

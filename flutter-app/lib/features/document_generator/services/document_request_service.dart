@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../models/document_request.dart';
+import '../models/document_request.dart';
 
 /// Service for managing document generation requests in Firestore.
 class DocumentRequestService {

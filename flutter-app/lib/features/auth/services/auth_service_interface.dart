@@ -1,5 +1,7 @@
-import 'package:executive_dashboard/models/user_model.dart';
+import 'package:executive_dashboard/features/auth/models/user_model.dart';
 import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 /// Interface for authentication services
 abstract class AuthServiceInterface {

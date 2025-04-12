@@ -1,10 +1,10 @@
+import 'package:executive_dashboard/core/auth/auth_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:executive_dashboard/features/auth/providers/auth_provider.dart';
 import 'package:executive_dashboard/features/auth/screens/login_screen.dart';
 import 'package:executive_dashboard/features/dashboard/screens/dashboard_screen.dart';
-import 'package:executive_dashboard/main.dart';
 import '../mocks/auth_mocks.dart';
 
 /// A test widget that wraps a child with the necessary providers for testing
@@ -147,7 +147,7 @@ void main() {
 
       // Build the AuthWrapper component
       await tester.pumpWidget(TestApp(
-        child: const AuthWrapper(),
+        child: AuthWrapper(child: const LoginScreen()),
         authService: testAuthService,
       ));
 

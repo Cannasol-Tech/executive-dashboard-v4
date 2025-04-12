@@ -2,8 +2,8 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import '../../models/document_request.dart';
-import '../../models/generated_document.dart';
+import '../models/document_request.dart';
+import '../models/generated_document.dart';
 
 /// Service for managing generated documents in Firestore.
 class GeneratedDocumentService {

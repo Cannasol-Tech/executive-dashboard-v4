@@ -39,6 +39,16 @@ class DocumentGeneratorProvider extends ChangeNotifier {
   // Request submission state
   bool _isSubmittingRequest = false;
 
+  // Error message
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+  bool get hasError => _errorMessage != null && _errorMessage!.isNotEmpty;
+  
+  void clearError() {
+    _errorMessage = null;
+    notifyListeners();
+  }
+
   // Status tracking
   final Map<String, StreamSubscription<DocumentSnapshot>> _statusSubscriptions =
       {};
@@ -96,8 +106,10 @@ class DocumentGeneratorProvider extends ChangeNotifier {
       _templates = snapshot.docs
           .map((doc) => DocumentTemplate.fromFirestore(doc))
           .toList();
+      _errorMessage = null;
     } catch (e) {
-      print('Error fetching templates: $e');
+      _errorMessage = 'Error fetching templates: $e';
+      print(_errorMessage);
       _templates = [];
     }
 
@@ -178,12 +190,14 @@ class DocumentGeneratorProvider extends ChangeNotifier {
       // Refresh requests list
       await fetchUserRequests();
 
+      _errorMessage = null;
       _isSubmittingRequest = false;
       notifyListeners();
 
       return docRef.id;
     } catch (e) {
-      print('Error submitting request: $e');
+      _errorMessage = 'Error submitting request: $e';
+      print(_errorMessage);
       _isSubmittingRequest = false;
       notifyListeners();
       return null;
@@ -207,8 +221,10 @@ class DocumentGeneratorProvider extends ChangeNotifier {
       _userRequests = snapshot.docs
           .map((doc) => DocumentRequest.fromFirestore(doc))
           .toList();
+      _errorMessage = null;
     } catch (e) {
-      print('Error fetching user requests: $e');
+      _errorMessage = 'Error fetching user requests: $e';
+      print(_errorMessage);
       _userRequests = [];
     }
 
@@ -235,8 +251,10 @@ class DocumentGeneratorProvider extends ChangeNotifier {
       _userDocuments = snapshot.docs
           .map((doc) => GeneratedDocument.fromFirestore(doc))
           .toList();
+      _errorMessage = null;
     } catch (e) {
-      print('Error fetching user documents: $e');
+      _errorMessage = 'Error fetching user documents: $e';
+      print(_errorMessage);
       _userDocuments = [];
     }
 
@@ -259,8 +277,10 @@ class DocumentGeneratorProvider extends ChangeNotifier {
       _sharedDocuments = snapshot.docs
           .map((doc) => GeneratedDocument.fromFirestore(doc))
           .toList();
+      _errorMessage = null;
     } catch (e) {
-      print('Error fetching shared documents: $e');
+      _errorMessage = 'Error fetching shared documents: $e';
+      print(_errorMessage);
       _sharedDocuments = [];
     }
 
@@ -298,9 +318,11 @@ class DocumentGeneratorProvider extends ChangeNotifier {
         }
       }
 
+      _errorMessage = null;
       return data;
     } catch (e) {
-      print('Error downloading document: $e');
+      _errorMessage = 'Error downloading document: $e';
+      print(_errorMessage);
       return null;
     }
   }
@@ -333,9 +355,11 @@ class DocumentGeneratorProvider extends ChangeNotifier {
         _userDocuments.removeWhere((doc) => doc.id == documentId);
       }
 
+      _errorMessage = null;
       notifyListeners();
     } catch (e) {
-      print('Error deleting document: $e');
+      _errorMessage = 'Error deleting document: $e';
+      print(_errorMessage);
     }
   }
 

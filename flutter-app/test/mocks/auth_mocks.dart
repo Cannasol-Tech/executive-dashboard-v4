@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'package:executive_dashboard/core/services/secure_storage_service.dart';
+import 'package:executive_dashboard/features/auth/services/auth_service_interface.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../lib/core/services/services.dart';
 import '../../lib/features/auth/models/user_model.dart';
 
 // Mock Firebase Auth User
-class MockUser implements UserModel {
+class MockUser implements UserModel, User {
   final String _uid;
   final String? _email;
   final String? _displayName;
@@ -46,7 +47,7 @@ class MockUserCredential implements UserCredential {
   MockUserCredential({MockUser? user}) : _user = user ?? MockUser();
 
   @override
-  UserModel? get user => _user;
+  User? get user => _user;
 
   @override
   AdditionalUserInfo? get additionalUserInfo => null;
@@ -173,27 +174,6 @@ class TestAuthService implements AuthServiceInterface {
   }
 
   @override
-  Future<UserCredential> signInWithGoogle() async {
-    // Simulate successful sign-in
-    final mockUser =
-        MockUser(uid: 'google-user-123', email: 'google-user@example.com');
-
-    final credential = MockUserCredential(user: mockUser);
-
-    _mockCurrentUser = mockUser;
-    _authStateController.add(mockUser);
-
-    await _secureStorage.storeAuthToken('google-token-123');
-    await _secureStorage.storeUserId(mockUser.uid);
-    if (mockUser.email != null) {
-      await _secureStorage.storeUserEmail(mockUser.email!);
-    }
-    await _secureStorage.storeLastLoginTime();
-
-    return credential;
-  }
-
-  @override
   Future<UserCredential> signInWithEmailAndPassword(
       String email, String password) async {
     if (email == 'test@example.com' && password == 'password123') {
@@ -206,8 +186,8 @@ class TestAuthService implements AuthServiceInterface {
 
       await _secureStorage.storeAuthToken('email-token-123');
       await _secureStorage.storeUserId(mockUser.uid);
-      if (mockUser.email != null) {
-        await _secureStorage.storeUserEmail(mockUser.email!);
+      if (mockUser.email.isNotEmpty) {
+        await _secureStorage.storeUserEmail(mockUser.email);
       }
       await _secureStorage.storeLastLoginTime();
 
@@ -233,8 +213,8 @@ class TestAuthService implements AuthServiceInterface {
 
     await _secureStorage.storeAuthToken('new-user-token-123');
     await _secureStorage.storeUserId(mockUser.uid);
-    if (mockUser.email != null) {
-      await _secureStorage.storeUserEmail(mockUser.email!);
+    if (mockUser.email.isNotEmpty) {
+      await _secureStorage.storeUserEmail(mockUser.email);
     }
     await _secureStorage.storeLastLoginTime();
 

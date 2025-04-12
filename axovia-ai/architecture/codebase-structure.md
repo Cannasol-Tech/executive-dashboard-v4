@@ -6,7 +6,119 @@ This document provides an **extensive definition** of every major directory and 
 
 ---
 
-## High-Level Overview
+## Cannasol Technologies Executive Dashboard Structure
+
+```
+/
+├── database.rules.json        # Firebase Realtime Database rules
+├── firebase.json              # Firebase project configuration
+├── HOW_TO_RUN_WITH_HOT_RELOAD.md  # Instructions for development mode
+├── Makefile                   # Build automation
+├── README.md                  # Project overview
+├── run_flutter_dev.bat        # Windows development startup script
+├── run_flutter_dev.sh         # Unix development startup script
+├── run.bat                    # Windows runtime script
+├── run.ps1                    # PowerShell runtime script
+├── axovia-ai/                 # Documentation and framework (see separate section)
+├── deploy/                    # Deployment scripts
+│   ├── deploy-dev.sh            # Development environment deployment
+│   ├── deploy-prod.sh           # Production environment deployment
+│   ├── deploy-staging.sh        # Staging environment deployment
+│   └── README.md                # Deployment instructions
+├── flutter-app/               # Main Flutter application
+│   ├── database.rules.json      # Firebase database rules for app
+│   ├── devtools_options.yaml    # Flutter DevTools configuration
+│   ├── firebase.json            # Firebase configuration 
+│   ├── firestore.indexes.json   # Firestore index definitions
+│   ├── firestore.rules          # Firestore security rules
+│   ├── Makefile                 # App-specific build automation
+│   ├── pubspec.lock             # Locked Flutter dependencies
+│   ├── pubspec.yaml             # Flutter dependencies and configuration
+│   ├── storage.rules            # Firebase Storage rules
+│   ├── assets/                  # Static assets (images, fonts, etc.)
+│   ├── env/                     # Environment configuration files
+│   ├── functions/               # App-specific cloud functions
+│   ├── lib/                     # Flutter source code
+│   │   ├── config/                # Configuration files
+│   │   ├── core/                  # Core application code
+│   │   ├── features/              # Feature modules
+│   │   │   ├── analytics/         # Analytics dashboard
+│   │   │   │   ├── models/        # Data models for analytics
+│   │   │   │   ├── providers/     # State management for analytics
+│   │   │   │   ├── screens/       # Analytics UI screens
+│   │   │   │   ├── widgets/       # Analytics UI components
+│   │   │   │   └── services/      # Analytics services
+│   │   │   ├── blog/              # Company blog management
+│   │   │   │   ├── models/        # Data models for blog
+│   │   │   │   ├── providers/     # State management for blog
+│   │   │   │   ├── screens/       # Blog UI screens
+│   │   │   │   ├── widgets/       # Blog UI components
+│   │   │   │   └── services/      # Blog services
+│   │   │   ├── chatbot/           # AI assistant chatbot
+│   │   │   │   ├── models/        # Data models for chatbot
+│   │   │   │   ├── providers/     # State management for chatbot
+│   │   │   │   ├── screens/       # Chatbot UI screens
+│   │   │   │   ├── widgets/       # Chatbot UI components
+│   │   │   │   └── services/      # Chatbot services
+│   │   │   ├── email/             # Email management
+│   │   │   │   ├── models/        # Data models for email
+│   │   │   │   ├── providers/     # State management for email
+│   │   │   │   ├── screens/       # Email UI screens
+│   │   │   │   ├── widgets/       # Email UI components
+│   │   │   │   └── services/      # Email services
+│   │   │   ├── document_generator/ # Document generator feature
+│   │   │   │   ├── models/        # Data models for documents
+│   │   │   │   ├── providers/     # State management for documents
+│   │   │   │   ├── screens/       # Document UI screens
+│   │   │   │   ├── widgets/       # Document UI components
+│   │   │   │   └── services/      # Document services
+│   │   │   ├── seo/               # SEO and Google Ads management
+│   │   │   │   ├── models/        # Data models for SEO
+│   │   │   │   ├── providers/     # State management for SEO
+│   │   │   │   ├── screens/       # SEO UI screens
+│   │   │   │   ├── widgets/       # SEO UI components
+│   │   │   │   └── services/      # SEO services
+│   │   │   ├── task_analytics/    # AI task performance metrics
+│   │   │   │   ├── models/        # Data models for task analytics 
+│   │   │   │   ├── providers/     # State management for task analytics
+│   │   │   │   ├── screens/       # Task analytics UI screens
+│   │   │   │   ├── widgets/       # Task analytics UI components
+│   │   │   │   └── services/      # Task analytics services
+│   │   │   ├── ai_insights/       # AI-generated insights
+│   │   │   │   ├── models/        # Data models for AI insights
+│   │   │   │   ├── providers/     # State management for AI insights
+│   │   │   │   ├── screens/       # AI insights UI screens
+│   │   │   │   ├── widgets/       # AI insights UI components
+│   │   │   │   └── services/      # AI insights services
+│   │   │   └── settings/          # Application settings
+│   │   │       ├── models/        # Settings models
+│   │   │       ├── providers/     # Settings state management
+│   │   │       ├── screens/       # Settings UI screens
+│   │   │       ├── widgets/       # Settings UI components
+│   │   │       └── services/      # Settings services
+│   │   ├── models/                # Global data models
+│   │   ├── services/              # Global service interfaces
+│   │   ├── shared/                # Shared components
+│   │   │   ├── widgets/           # Reusable UI components
+│   │   │   ├── theme/             # Theme definitions
+│   │   │   ├── utils/             # Utility functions
+│   │   │   └── constants/         # Application constants
+│   │   └── main.dart              # Application entry point
+│   ├── public/                  # Web public assets
+│   ├── test/                    # Test directory
+│   │   ├── unit/                  # Unit tests
+│   │   ├── widget/                # Widget tests
+│   │   └── integration/           # Integration tests
+│   └── web/                     # Web-specific assets
+├── functions/                 # Global Cloud Functions
+│   ├── main.py                  # Python Cloud Functions entry point
+│   └── requirements.txt         # Python dependencies
+└── public/                    # Public web assets
+    ├── 404.html                 # 404 error page
+    └── index.html               # Main HTML entry point
+```
+
+## Axovia AI Framework Structure
 
 ```
 /
@@ -35,8 +147,7 @@ This document provides an **extensive definition** of every major directory and 
 │   │   ├── meeting-notes.md      # Summaries of stakeholder discussions
 │   │   └── technical-debt.md     # Lists known issues for future resolution
 │   ├── architecture/       # System diagrams, code structure, design guidelines
-|   |   ├── project-structure.md            # Diagram of the working projects code structure 
-│   │   ├── axovia-framework-structure.md   # This document - codebase organization
+|   |   ├── codebase-structure.md            # Diagram of the working projects code structure 
 │   │   ├── component-registry.md           # Registry of reusable components
 │   │   ├── design-system.md                # Design principles and guidelines
 │   │   ├── api-guide.md                    # API documentation and usage

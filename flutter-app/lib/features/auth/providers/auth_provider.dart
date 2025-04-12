@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user_model.dart';
-import '../../../core/services/services.dart';
+import '../../../core/services/firebase_service.dart';
+import '../services/auth_service.dart';
+
 
 /// Provider for handling authentication state
 class AuthProvider with ChangeNotifier {
