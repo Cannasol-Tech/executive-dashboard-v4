@@ -1,3 +1,4 @@
+import 'package:executive_dashboard/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'secure_storage_service.dart';
@@ -13,11 +14,15 @@ class AuthService implements AuthServiceInterface {
 
   // Stream of authentication state changes
   @override
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
+  Stream<UserModel> get authStateChanges =>
+      _auth.authStateChanges().asyncMap((firebaseUser) async {
+        // Fetch additional user data from Firestore or other sources
+        return UserModel.fromFirebaseUser(firebaseUser);
+      });
 
   // Get current user
   @override
-  User? get currentUser => _auth.currentUser;
+  UserModel get currentUser => UserModel.fromFirebaseUser(_auth.currentUser);
 
   // Check if user is authenticated
   @override

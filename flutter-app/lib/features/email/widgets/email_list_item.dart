@@ -1,9 +1,9 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../config/theme.dart';
-import '../../../core/providers/email_provider.dart';
-import '../../../models/email.dart';
-import '../../../models/email_task.dart';
+import '../providers/email_provider.dart';
+import '../email.dart';
+import '../email_task.dart';
 import 'task_item_widget.dart';
 
 class EmailListItem extends StatefulWidget {
@@ -85,7 +85,7 @@ class _EmailListItemState extends State<EmailListItem>
       case EmailStatus.pending:
         return Colors.grey;
       case EmailStatus.responded:
-        return AppTheme.infoSapphire;
+        return AppTheme.textPrimaryColor;
       case EmailStatus.approved:
         return AppTheme.successEmerald;
       case EmailStatus.rejected:
@@ -213,8 +213,8 @@ class _EmailListItemState extends State<EmailListItem>
             color: widget.isSelected
                 ? AppTheme.royalAzure.withOpacity(0.15)
                 : _isHovered
-                    ? AppTheme.deepOcean.withOpacity(0.5)
-                    : AppTheme.obsidian.withOpacity(0.1),
+                    ? AppTheme.textPrimaryColor.withOpacity(0.5)
+                    : AppTheme.textPrimaryColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: widget.isSelected
@@ -229,7 +229,7 @@ class _EmailListItemState extends State<EmailListItem>
                     BoxShadow(
                       color: widget.isSelected
                           ? AppTheme.royalAzure.withOpacity(0.15)
-                          : AppTheme.deepOcean.withOpacity(0.2),
+                          : AppTheme.textPrimaryColor.withOpacity(0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     )

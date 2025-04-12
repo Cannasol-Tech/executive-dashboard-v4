@@ -1,13 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:executive_dashboard/models/user_model.dart';
 import 'dart:async';
 
 /// Interface for authentication services
 abstract class AuthServiceInterface {
   /// Stream of authentication state changes
-  Stream<User?> get authStateChanges;
+  Stream<UserModel> get authStateChanges;
 
   /// Get current user
-  User? get currentUser;
+  UserModel get currentUser;
 
   /// Check if user is authenticated
   bool get isAuthenticated;

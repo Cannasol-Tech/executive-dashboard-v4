@@ -1,6 +1,6 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
-import '../../../config/theme.dart';
-import '../../dashboard/dashboard_screen.dart';
+import '../screens/dashboard_screen.dart';
 
 /// Reusable card widget for dashboard grid items
 class DashboardCard extends StatefulWidget {
@@ -175,7 +175,7 @@ class _DashboardCardState extends State<DashboardCard>
                           minHeight: widget.minHeight,
                         ),
                         decoration: BoxDecoration(
-                          gradient: _getCardGradient(),
+                          gradient: _getCardGradient(context),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: _isHovering ? AppTheme.elevation2 : null,
                         ),
@@ -485,7 +485,7 @@ class _DashboardCardState extends State<DashboardCard>
         : AppTheme.moonlight;
   }
 
-  Gradient _getCardGradient() {
+  Gradient _getCardGradient(BuildContext context) {
     switch (widget.cardType) {
       case CardType.revenue:
         return LinearGradient(

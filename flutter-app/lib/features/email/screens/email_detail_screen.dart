@@ -1,10 +1,10 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../../config/theme.dart';
-import '../../../core/providers/email_provider.dart';
-import '../../../models/email.dart';
-import '../../../models/email_task.dart';
+import '../providers/email_provider.dart';
+import '../email.dart';
+import '../email_task.dart';
 import '../widgets/task_item_widget.dart';
 
 class EmailDetailScreen extends StatefulWidget {
@@ -73,7 +73,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen>
             _buildStatusBadge(email.status),
             const SizedBox(width: 8),
             PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert, color: AppTheme.moonlight),
+              icon: Icon(Icons.more_vert, color: AppTheme.textPrimaryColor),
               onSelected: (value) async {
                 switch (value) {
                   case 'mark_read':
@@ -100,7 +100,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen>
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.errorColor,
+                              backgroundColor: AppTheme.errorRuby,
                               foregroundColor: Colors.white,
                             ),
                             child: const Text('Mark as Spam'),
@@ -395,7 +395,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen>
                     child: TextField(
                       controller: _responseController,
                       maxLines: 10,
-                      style: const TextStyle(color: AppTheme.moonlight),
+                      style: TextStyle(color: AppTheme.moonlight),
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.all(16),
                         border: InputBorder.none,
@@ -813,7 +813,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen>
                             color: AppTheme.royalAzure,
                           ),
                         )
-                      : const Icon(
+                      : Icon(
                           Icons.person,
                           color: AppTheme.royalAzure,
                         ),
@@ -1005,7 +1005,7 @@ class _EmailDetailScreenState extends State<EmailDetailScreen>
   }
 
   Widget _buildLoadingView() {
-    return const Center(
+    return Center(
       child: CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(AppTheme.emeraldGleam),
       ),

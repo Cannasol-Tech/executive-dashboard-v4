@@ -1,255 +1,374 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../../models/email.dart';
-import '../../../models/email_task.dart';
-import '../../../services/firebase_service.dart';
+import '../models/email.dart';
+import '../models/email_task.dart';
+import 'dart:math';
 
-/// Service for interacting with email data in Firebase
+/// Service class for handling email operations with Firebase
 class EmailService {
-  final FirebaseService _firebaseService = FirebaseService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Collection references
-  CollectionReference get _emailCollection => _firebaseService.emailCollection;
-  CollectionReference get _taskCollection => _firestore.collection('tasks');
+  CollectionReference get _emailsCollection => _firestore.collection('emails');
+  CollectionReference get _tasksCollection =>
+      _firestore.collection('email_tasks');
 
-  /// Get all emails for the current user with filters and sorting
-  Stream<List<Email>> getEmails({
+  /// Fetch emails with optional filtering
+  Future<List<Email>> getEmails({
+    String? statusFilter,
+    int? priorityFilter,
     bool includeArchived = false,
     bool includeSpam = false,
-    String? filterByStatus,
-    int? filterByPriority,
     String? searchQuery,
-  }) {
-    Query query = _emailCollection;
+  }) async {
+    try {
+      Query query = _emailsCollection;
 
-    // Apply basic filters
-    if (!includeArchived) {
-      query = query.where('archived', isEqualTo: false);
+      // Apply filters
+      if (!includeArchived) {
+        query = query.where('archived', isEqualTo: false);
+      }
+
+      if (!includeSpam) {
+        query = query.where('isSpam', isEqualTo: false);
+      }
+
+      if (statusFilter != null) {
+        query = query.where('status', isEqualTo: statusFilter);
+      }
+
+      if (priorityFilter != null) {
+        query = query.where('priority', isEqualTo: priorityFilter);
+      }
+
+      // Sort by received date (newest first)
+      query = query.orderBy('receivedAt', descending: true);
+
+      final snapshot = await query.get();
+      final emails =
+          snapshot.docs.map((doc) => Email.fromFirestore(doc)).toList();
+
+      // If search query is provided, filter the results client-side
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        final searchLower = searchQuery.toLowerCase();
+        return emails
+            .where((email) =>
+                email.subject.toLowerCase().contains(searchLower) ||
+                email.senderName.toLowerCase().contains(searchLower) ||
+                email.senderEmail.toLowerCase().contains(searchLower) ||
+                email.body.toLowerCase().contains(searchLower))
+            .toList();
+      }
+
+      return emails;
+    } catch (e) {
+      throw Exception('Failed to fetch emails: $e');
     }
-
-    if (!includeSpam) {
-      query = query.where('isSpam', isEqualTo: false);
-    }
-
-    // Apply additional filters
-    if (filterByStatus != null) {
-      query = query.where('status', isEqualTo: filterByStatus);
-    }
-
-    if (filterByPriority != null) {
-      query = query.where('priority', isEqualTo: filterByPriority);
-    }
-
-    // By default, sort by received date (newest first)
-    query = query.orderBy('receivedAt', descending: true);
-
-    // Convert the query to a stream of Email objects
-    return query.snapshots().map((snapshot) {
-      return snapshot.docs
-          .map((doc) => Email.fromFirestore(doc))
-          .where((email) {
-        // Apply text search if provided
-        if (searchQuery != null && searchQuery.trim().isNotEmpty) {
-          final search = searchQuery.toLowerCase().trim();
-          return email.subject.toLowerCase().contains(search) ||
-              email.senderName.toLowerCase().contains(search) ||
-              email.senderEmail.toLowerCase().contains(search) ||
-              email.body.toLowerCase().contains(search);
-        }
-        return true;
-      }).toList();
-    });
   }
 
   /// Get a single email by ID
   Future<Email?> getEmailById(String emailId) async {
-    final doc = await _emailCollection.doc(emailId).get();
-    if (doc.exists) {
-      return Email.fromFirestore(doc);
-    }
-    return null;
-  }
-
-  /// Get a stream of a single email by ID (for real-time updates)
-  Stream<Email?> streamEmailById(String emailId) {
-    return _emailCollection.doc(emailId).snapshots().map((doc) {
+    try {
+      final doc = await _emailsCollection.doc(emailId).get();
       if (doc.exists) {
         return Email.fromFirestore(doc);
       }
       return null;
-    });
-  }
-
-  /// Mark an email as read
-  Future<void> markAsRead(String emailId) {
-    return _emailCollection.doc(emailId).update({
-      'isRead': true,
-    });
-  }
-
-  /// Mark an email as unread
-  Future<void> markAsUnread(String emailId) {
-    return _emailCollection.doc(emailId).update({
-      'isRead': false,
-    });
-  }
-
-  /// Mark multiple emails as read or unread
-  Future<void> markMultipleReadStatus(
-      List<String> emailIds, bool isRead) async {
-    final batch = _firestore.batch();
-
-    for (final emailId in emailIds) {
-      final docRef = _emailCollection.doc(emailId);
-      batch.update(docRef, {'isRead': isRead});
+    } catch (e) {
+      throw Exception('Failed to fetch email: $e');
     }
-
-    return batch.commit();
   }
 
-  /// Archive an email
-  Future<void> archiveEmail(String emailId) {
-    return _emailCollection.doc(emailId).update({
-      'archived': true,
-    });
-  }
-
-  /// Archive multiple emails
-  Future<void> archiveMultipleEmails(List<String> emailIds) async {
-    final batch = _firestore.batch();
-
-    for (final emailId in emailIds) {
-      final docRef = _emailCollection.doc(emailId);
-      batch.update(docRef, {'archived': true});
+  /// Update an email in Firestore
+  Future<void> updateEmail(Email email) async {
+    try {
+      await _emailsCollection.doc(email.id).update(email.toFirestore());
+    } catch (e) {
+      throw Exception('Failed to update email: $e');
     }
+  }
 
-    return batch.commit();
+  /// Mark an email as read/unread
+  Future<void> markEmailReadStatus(String emailId, bool isRead) async {
+    try {
+      await _emailsCollection.doc(emailId).update({'isRead': isRead});
+    } catch (e) {
+      throw Exception('Failed to update email read status: $e');
+    }
+  }
+
+  /// Mark an email as archived
+  Future<void> archiveEmail(String emailId) async {
+    try {
+      await _emailsCollection.doc(emailId).update({'archived': true});
+    } catch (e) {
+      throw Exception('Failed to archive email: $e');
+    }
   }
 
   /// Mark an email as spam
-  Future<void> markAsSpam(String emailId) {
-    return _emailCollection.doc(emailId).update({
-      'isSpam': true,
-    });
+  Future<void> markAsSpam(String emailId) async {
+    try {
+      await _emailsCollection.doc(emailId).update({'isSpam': true});
+    } catch (e) {
+      throw Exception('Failed to mark email as spam: $e');
+    }
   }
 
   /// Update the AI response for an email
-  Future<void> updateAiResponse(String emailId, String response) {
-    return _emailCollection.doc(emailId).update({
-      'aiResponse': response,
-      'status': EmailStatus.responded.toString().split('.').last,
-    });
+  Future<void> updateAiResponse(String emailId, String response) async {
+    try {
+      await _emailsCollection.doc(emailId).update({
+        'aiResponse': response,
+        'status': EmailStatus.responded.toString().split('.').last,
+      });
+    } catch (e) {
+      throw Exception('Failed to update AI response: $e');
+    }
   }
 
   /// Approve the AI response for an email
-  Future<void> approveAiResponse(String emailId) {
-    return _emailCollection.doc(emailId).update({
-      'status': EmailStatus.approved.toString().split('.').last,
-    });
+  Future<void> approveAiResponse(String emailId) async {
+    try {
+      await _emailsCollection.doc(emailId).update({
+        'status': EmailStatus.approved.toString().split('.').last,
+      });
+    } catch (e) {
+      throw Exception('Failed to approve AI response: $e');
+    }
   }
 
   /// Reject the AI response for an email
-  Future<void> rejectAiResponse(String emailId) {
-    return _emailCollection.doc(emailId).update({
-      'status': EmailStatus.rejected.toString().split('.').last,
-    });
+  Future<void> rejectAiResponse(String emailId) async {
+    try {
+      await _emailsCollection.doc(emailId).update({
+        'status': EmailStatus.rejected.toString().split('.').last,
+      });
+    } catch (e) {
+      throw Exception('Failed to reject AI response: $e');
+    }
   }
 
   /// Get tasks associated with an email
-  Stream<List<EmailTask>> getTasksForEmail(String emailId) {
-    return _taskCollection
-        .where('sourceEmailId', isEqualTo: emailId)
-        .snapshots()
-        .map((snapshot) {
+  Future<List<EmailTask>> getTasksForEmail(String emailId) async {
+    try {
+      final snapshot = await _tasksCollection
+          .where('sourceEmailId', isEqualTo: emailId)
+          .orderBy('createdDate', descending: true)
+          .get();
+
       return snapshot.docs.map((doc) => EmailTask.fromFirestore(doc)).toList();
-    });
+    } catch (e) {
+      throw Exception('Failed to fetch tasks: $e');
+    }
   }
 
-  /// Create a new task for an email
-  Future<void> createTask(EmailTask task) {
-    return _taskCollection.add(task.toFirestore());
+  /// Add a new task
+  Future<EmailTask> addTask(EmailTask task) async {
+    try {
+      final docRef = await _tasksCollection.add(task.toFirestore());
+      // Return the task with the new ID
+      return EmailTask(
+        id: docRef.id,
+        title: task.title,
+        description: task.description,
+        sourceEmailId: task.sourceEmailId,
+        createdDate: task.createdDate,
+        dueDate: task.dueDate,
+        status: task.status,
+        assignedTo: task.assignedTo,
+      );
+    } catch (e) {
+      throw Exception('Failed to add task: $e');
+    }
   }
 
   /// Update a task
-  Future<void> updateTask(EmailTask task) {
-    return _taskCollection.doc(task.id).update(task.toFirestore());
+  Future<void> updateTask(EmailTask task) async {
+    try {
+      await _tasksCollection.doc(task.id).update(task.toFirestore());
+    } catch (e) {
+      throw Exception('Failed to update task: $e');
+    }
   }
 
   /// Delete a task
-  Future<void> deleteTask(String taskId) {
-    return _taskCollection.doc(taskId).delete();
+  Future<void> deleteTask(String taskId) async {
+    try {
+      await _tasksCollection.doc(taskId).delete();
+    } catch (e) {
+      throw Exception('Failed to delete task: $e');
+    }
   }
 
-  /// Sample data generator for development and testing
-  Future<void> generateSampleData(int count) async {
-    final batch = _firestore.batch();
+  /// Generate sample data for testing
+  Future<List<Email>> generateSampleEmails(int count) async {
+    final List<Email> generatedEmails = [];
+    final random = Random();
 
-    final now = DateTime.now();
-    final statuses = [
-      EmailStatus.pending.toString().split('.').last,
-      EmailStatus.responded.toString().split('.').last,
-      EmailStatus.approved.toString().split('.').last,
-      EmailStatus.rejected.toString().split('.').last
+    // Sample data for randomization
+    final senders = [
+      {'name': 'John Smith', 'email': 'john.smith@example.com'},
+      {'name': 'Jane Doe', 'email': 'jane.doe@example.com'},
+      {'name': 'Alex Johnson', 'email': 'alex@techinnovators.com'},
+      {'name': 'Sarah Williams', 'email': 'sarah@growthpartners.com'},
+      {'name': 'Michael Brown', 'email': 'michael@cannabisindustry.org'},
     ];
 
-    for (int i = 0; i < count; i++) {
-      final docRef = _emailCollection.doc();
+    final subjects = [
+      'Partnership Opportunity for Cannasol',
+      'Following up on our recent discussion',
+      'New product line proposal',
+      'Quarterly business review - Action required',
+      'Industry conference invitation',
+      'Contract renewal discussion',
+      'Schedule a demo of our platform',
+      'Important regulatory update',
+      'Feedback on recent product samples',
+      'Investor relations inquiry',
+    ];
 
-      final sampleEmail = {
-        'subject': 'Sample Email Subject ${i + 1}',
-        'senderEmail': 'sender${i + 1}@example.com',
-        'senderName': 'Sender Name ${i + 1}',
-        'recipients': ['recipient@cannasol.com'],
-        'body':
-            'This is the body of sample email ${i + 1}. It contains some content that the AI agent can analyze and respond to.',
-        'receivedAt': Timestamp.fromDate(now.subtract(Duration(hours: i * 3))),
-        'status': statuses[i % 4],
-        'aiResponse': i % 4 == 0
+    final bodies = [
+      'I hope this email finds you well. I wanted to reach out regarding a potential partnership opportunity between our companies...',
+      'Thank you for taking the time to meet with us last week. As discussed, I am sending over the information about our services...',
+      'Based on our market research, we believe there is a significant opportunity to expand your product line into the following areas...',
+      'It\'s time for our quarterly business review. We need to discuss the following items: 1. Sales performance, 2. Market trends, 3. Product development...',
+      'We would like to invite you to speak at our upcoming industry conference on sustainable practices in the cannabis industry...',
+      'Your current contract with us is set to expire in 30 days. We would like to discuss renewal terms and potential upgrades to your service package...',
+      'Our team has developed a new analytics platform specifically designed for companies in your industry. We\'d like to offer you an exclusive demo...',
+      'There has been a significant regulatory change that affects operations in the following states where your company operates...',
+      'We received the product samples you sent last month. Our team has completed the testing and would like to share our feedback...',
+      'As an investor relations representative for XYZ Fund, I\'m reaching out to discuss potential investment opportunities in Cannasol Technologies...',
+    ];
+
+    // Generate emails
+    for (int i = 0; i < count; i++) {
+      final senderIndex = random.nextInt(senders.length);
+      final subjectIndex = random.nextInt(subjects.length);
+      final bodyIndex = random.nextInt(bodies.length);
+
+      final emailStatus = random.nextDouble() < 0.6
+          ? EmailStatus.pending
+          : random.nextDouble() < 0.7
+              ? EmailStatus.responded
+              : random.nextDouble() < 0.5
+                  ? EmailStatus.approved
+                  : EmailStatus.rejected;
+
+      final priority = random.nextDouble() < 0.2
+          ? 1
+          : random.nextDouble() < 0.6
+              ? 2
+              : 3;
+      final isRead = random.nextBool();
+      final hasAttachments = random.nextDouble() < 0.3;
+
+      // Create a random received date within the last 14 days
+      final receivedDate = DateTime.now().subtract(
+        Duration(
+          days: random.nextInt(14),
+          hours: random.nextInt(24),
+          minutes: random.nextInt(60),
+        ),
+      );
+
+      // Create the email document in Firestore
+      final emailData = {
+        'subject': subjects[subjectIndex],
+        'senderEmail': senders[senderIndex]['email'],
+        'senderName': senders[senderIndex]['name'],
+        'recipients': ['exec@cannasol.com'],
+        'body': bodies[bodyIndex],
+        'receivedAt': Timestamp.fromDate(receivedDate),
+        'status': emailStatus.toString().split('.').last,
+        'aiResponse': emailStatus == EmailStatus.pending
             ? null
-            : 'This is a sample AI-generated response for email ${i + 1}.',
-        'priority': (i % 3) + 1, // 1, 2, or 3
-        'isRead': i % 2 == 0,
-        'hasAttachments': i % 5 == 0,
-        'attachmentUrls': i % 5 == 0
-            ? [
-                'https://example.com/attachment1.pdf',
-                'https://example.com/attachment2.jpg'
-              ]
+            : 'Thank you for your email. We appreciate your interest in Cannasol Technologies. I have reviewed your request and would like to discuss this further. Are you available for a call next week?',
+        'priority': priority,
+        'isRead': isRead,
+        'hasAttachments': hasAttachments,
+        'attachmentUrls': hasAttachments
+            ? List.generate(
+                random.nextInt(3) + 1,
+                (index) =>
+                    'https://storage.example.com/attachments/file${random.nextInt(1000)}.${[
+                  'pdf',
+                  'docx',
+                  'xlsx',
+                  'jpg'
+                ][random.nextInt(4)]}',
+              )
             : null,
-        'tags': i % 3 == 0
-            ? ['important', 'follow-up']
-            : (i % 3 == 1 ? ['newsletter'] : null),
-        'needsResponse': i % 4 != 3, // Only 3/4 emails need response
-        'isSpam': i % 15 == 0, // 1/15 emails are spam
-        'archived': i % 10 == 0, // 1/10 emails are archived
+        'tags': random.nextDouble() < 0.4
+            ? List.generate(
+                random.nextInt(3) + 1,
+                (index) => [
+                  'urgent',
+                  'sales',
+                  'partnership',
+                  'contract',
+                  'legal',
+                  'marketing'
+                ][random.nextInt(6)],
+              )
+            : null,
+        'needsResponse': emailStatus != EmailStatus.approved,
+        'isSpam': false,
+        'archived': false,
       };
 
-      batch.set(docRef, sampleEmail);
+      final docRef = await _emailsCollection.add(emailData);
 
-      // Add 1-3 tasks for some emails
-      if (i % 3 == 0) {
-        final taskCount = (i % 3) + 1; // 1, 2, or 3 tasks
+      // Create the Email object
+      final email = Email(
+        id: docRef.id,
+        subject: emailData['subject'] as String,
+        senderEmail: emailData['senderEmail'] as String,
+        senderName: emailData['senderName'] as String,
+        recipients: List<String>.from(emailData['recipients'] as List),
+        body: emailData['body'] as String,
+        receivedAt: receivedDate,
+        status: emailStatus,
+        aiResponse: emailData['aiResponse'] as String?,
+        priority: priority,
+        isRead: isRead,
+        hasAttachments: hasAttachments,
+        attachmentUrls: emailData['attachmentUrls'] != null
+            ? List<String>.from(emailData['attachmentUrls'] as List)
+            : null,
+        tags: emailData['tags'] != null
+            ? List<String>.from(emailData['tags'] as List)
+            : null,
+        needsResponse: emailData['needsResponse'] as bool,
+        isSpam: false,
+        archived: false,
+      );
 
+      generatedEmails.add(email);
+
+      // Generate some tasks for this email
+      if (random.nextDouble() < 0.4) {
+        final taskCount = random.nextInt(3) + 1;
         for (int t = 0; t < taskCount; t++) {
-          final taskDocRef = _taskCollection.doc();
-          final task = {
-            'title': 'Task ${t + 1} for Email ${i + 1}',
+          final taskData = {
+            'title': 'Follow up on ${subjects[subjectIndex]}',
             'description':
-                'This is a sample task extracted from email content.',
+                'Need to review and respond to this email from ${senders[senderIndex]['name']}',
             'sourceEmailId': docRef.id,
-            'createdDate': Timestamp.fromDate(now),
-            'dueDate': Timestamp.fromDate(now.add(Duration(days: t + 1))),
-            'status': t % 2 == 0 ? 'todo' : 'inProgress',
-            'assignedTo': null,
+            'createdDate': Timestamp.fromDate(DateTime.now()),
+            'dueDate': random.nextBool()
+                ? Timestamp.fromDate(
+                    DateTime.now().add(Duration(days: random.nextInt(14) + 1)),
+                  )
+                : null,
+            'status': ['todo', 'inProgress', 'completed'][random.nextInt(3)],
+            'assignedTo': random.nextBool() ? 'Stephen Fisher' : null,
           };
 
-          batch.set(taskDocRef, task);
+          await _tasksCollection.add(taskData);
         }
       }
     }
 
-    return batch.commit();
+    return generatedEmails;
   }
 }

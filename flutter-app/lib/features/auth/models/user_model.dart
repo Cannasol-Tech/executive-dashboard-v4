@@ -23,8 +23,23 @@ class UserModel {
     this.preferences,
   });
 
+  /// Creates a new UserModel with default values
+  factory UserModel.empty() {
+    return UserModel(
+      uid: '',
+      email: '',
+      displayName: 'User',
+      photoUrl: null,
+      role: 'user',
+      permissions: [],
+      lastLogin: DateTime.now(),
+      preferences: {},
+    );
+  }
+
   /// Creates a UserModel from a Firebase User
-  factory UserModel.fromFirebaseUser(dynamic user, {Map<String, dynamic>? additionalData}) {
+  factory UserModel.fromFirebaseUser(dynamic user,
+      {Map<String, dynamic>? additionalData}) {
     return UserModel(
       uid: user.uid,
       email: user.email ?? '',
@@ -32,10 +47,23 @@ class UserModel {
       photoUrl: user.photoURL,
       role: additionalData?['role'] ?? 'user',
       permissions: List<String>.from(additionalData?['permissions'] ?? []),
-      lastLogin: additionalData?['lastLogin'] != null 
-          ? (additionalData!['lastLogin'] as Timestamp).toDate() 
+      lastLogin: additionalData?['lastLogin'] != null
+          ? (additionalData!['lastLogin'] as Timestamp).toDate()
           : DateTime.now(),
       preferences: additionalData?['preferences'],
+    );
+  }
+
+  factory UserModel.streamFirebaseUser(dynamic user) {
+    return UserModel(
+      uid: user.uid,
+      email: user.email ?? '',
+      displayName: user.displayName ?? 'User',
+      photoUrl: user.photoURL,
+      role: 'user',
+      permissions: [],
+      lastLogin: DateTime.now(),
+      preferences: {},
     );
   }
 
@@ -49,8 +77,8 @@ class UserModel {
       photoUrl: data['photoUrl'],
       role: data['role'] ?? 'user',
       permissions: List<String>.from(data['permissions'] ?? []),
-      lastLogin: data['lastLogin'] != null 
-          ? (data['lastLogin'] as Timestamp).toDate() 
+      lastLogin: data['lastLogin'] != null
+          ? (data['lastLogin'] as Timestamp).toDate()
           : null,
       preferences: data['preferences'],
     );
@@ -92,4 +120,4 @@ class UserModel {
       preferences: preferences ?? this.preferences,
     );
   }
-} 
+}

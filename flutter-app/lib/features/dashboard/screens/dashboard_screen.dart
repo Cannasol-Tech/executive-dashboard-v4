@@ -1,11 +1,12 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import '../../config/theme.dart';
-import '../../../core/providers/auth_provider.dart';
-import '../../../core/providers/dashboard_summary_provider.dart';
-import '../../models/dashboard_summary.dart';
-import '../shared/widgets/dashboard_card.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../providers/dashboard_summary_provider.dart';
+import '../models/dashboard_summary.dart';
+import '../widgets/dashboard_card.dart';
+import '../../shared/widgets/theme_toggle.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// Main dashboard screen for the Cannasol Executive Dashboard
@@ -96,6 +97,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           const SizedBox(width: 8),
           _buildUserAvatar(context, authProvider),
           const SizedBox(width: 16),
+          ThemeToggle(),
         ],
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -397,9 +399,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
               ),
             ),
-            decoration: const BoxDecoration(
-              gradient: AppTheme.premiumBrand,
-            ),
+            decoration: BoxDecoration(gradient: AppTheme.premiumBrand),
           ),
           Expanded(
             child: ListView(

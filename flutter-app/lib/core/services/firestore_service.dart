@@ -1,19 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/analysis_data.dart';
-import '../models/dashboard_summary.dart'; // Import the new model
+import '../../features/analysis/models/analysis_data.dart';
+import '../../features/dashboard/models/dashboard_summary.dart'; // Import the new model
 // Import other models as needed
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // --- Analysis Data --- 
+  // --- Analysis Data ---
 
   /// Fetches the single AnalysisData document.
   /// Assumes data is stored in a specific document, e.g., 'dashboard/analysis'
   Future<AnalysisData> getAnalysisData() async {
     try {
       // TODO: Make the document path configurable if needed
-      DocumentSnapshot doc = await _db.collection('dashboard').doc('analysis').get();
+      DocumentSnapshot doc =
+          await _db.collection('dashboard').doc('analysis').get();
       if (doc.exists) {
         return AnalysisData.fromFirestore(doc);
       } else {
@@ -30,7 +31,11 @@ class FirestoreService {
   /// Returns a stream of the AnalysisData document for real-time updates.
   Stream<AnalysisData> streamAnalysisData() {
     // TODO: Make the document path configurable if needed
-    return _db.collection('dashboard').doc('analysis').snapshots().map((snapshot) {
+    return _db
+        .collection('dashboard')
+        .doc('analysis')
+        .snapshots()
+        .map((snapshot) {
       if (snapshot.exists) {
         try {
           return AnalysisData.fromFirestore(snapshot);
@@ -42,9 +47,9 @@ class FirestoreService {
         return AnalysisData.empty();
       }
     }).handleError((error) {
-        print('Error in analysis data stream: $error');
-        // Optionally, yield a specific error state or just empty data
-        return AnalysisData.empty(); 
+      print('Error in analysis data stream: $error');
+      // Optionally, yield a specific error state or just empty data
+      return AnalysisData.empty();
     });
   }
 
@@ -54,7 +59,8 @@ class FirestoreService {
   /// Assumes data is stored in 'dashboard/summary'
   Future<DashboardSummary> getDashboardSummary() async {
     try {
-      DocumentSnapshot doc = await _db.collection('dashboard').doc('summary').get();
+      DocumentSnapshot doc =
+          await _db.collection('dashboard').doc('summary').get();
       if (doc.exists) {
         return DashboardSummary.fromFirestore(doc);
       } else {
@@ -69,7 +75,11 @@ class FirestoreService {
 
   /// Returns a stream of the DashboardSummary document.
   Stream<DashboardSummary> streamDashboardSummary() {
-    return _db.collection('dashboard').doc('summary').snapshots().map((snapshot) {
+    return _db
+        .collection('dashboard')
+        .doc('summary')
+        .snapshots()
+        .map((snapshot) {
       if (snapshot.exists) {
         try {
           return DashboardSummary.fromFirestore(snapshot);
@@ -86,13 +96,13 @@ class FirestoreService {
     });
   }
 
-  // --- Other Data Fetching Methods --- 
+  // --- Other Data Fetching Methods ---
   // TODO: Add methods for fetching data for the main dashboard grid, user profile, etc.
-  
+
   // Example for a collection (if needed later):
   // Stream<List<YourModel>> streamYourCollection() {
-  //   return _db.collection('yourCollection').snapshots().map((snapshot) => 
+  //   return _db.collection('yourCollection').snapshots().map((snapshot) =>
   //     snapshot.docs.map((doc) => YourModel.fromFirestore(doc)).toList()
   //   );
   // }
-} 
+}

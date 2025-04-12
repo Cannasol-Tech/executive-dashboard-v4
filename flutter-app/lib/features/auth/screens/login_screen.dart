@@ -1,7 +1,7 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/providers/auth_provider.dart';
-import '../../config/theme.dart';
+import '../providers/auth_provider.dart';
 
 /// Login screen for the Cannasol Executive Dashboard
 class LoginScreen extends StatefulWidget {
@@ -98,7 +98,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         if (authProvider.isLoading) ...[
                           const SizedBox(height: 24),
-                          const CircularProgressIndicator(),
+                          CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                AppTheme.emeraldGleam),
+                          ),
                         ],
 
                         if (authProvider.errorMessage != null) ...[
@@ -295,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Enter your email address and we\'ll send you a link to reset your password.',
             textAlign: TextAlign.center,
             style: TextStyle(color: AppTheme.slate),

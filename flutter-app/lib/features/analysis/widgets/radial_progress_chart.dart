@@ -1,6 +1,6 @@
 import 'dart:math';
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
-import '../../../config/theme.dart';
 
 class RadialProgressChart extends StatefulWidget {
   final double percentage;

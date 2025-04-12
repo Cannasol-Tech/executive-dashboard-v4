@@ -1,7 +1,7 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../config/theme.dart';
-import '../../../core/providers/email_provider.dart';
+import '../providers/email_provider.dart';
 
 /// Panel of action buttons shown when emails are selected
 class EmailActionsPanel extends StatelessWidget {

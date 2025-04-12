@@ -1,7 +1,7 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/providers/auth_provider.dart';
-import '../../config/theme.dart';
+import '../providers/auth_provider.dart';
 
 /// Registration screen for the Cannasol Executive Dashboard
 class RegisterScreen extends StatefulWidget {
@@ -17,10 +17,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -52,7 +52,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             end: Alignment.bottomRight,
             colors: [
               AppTheme.deepOcean,
-              Color.lerp(AppTheme.deepOcean, AppTheme.royalAzure, 0.2) ?? AppTheme.deepOcean,
+              Color.lerp(AppTheme.deepOcean, AppTheme.royalAzure, 0.2) ??
+                  AppTheme.deepOcean,
             ],
           ),
         ),
@@ -107,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ),
                           const SizedBox(height: 32),
-                          
+
                           // Form fields
                           TextFormField(
                             controller: _nameController,
@@ -126,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          
+
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
@@ -141,7 +142,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your email';
                               }
-                              final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                              final emailRegex =
+                                  RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
                               if (!emailRegex.hasMatch(value)) {
                                 return 'Please enter a valid email address';
                               }
@@ -149,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          
+
                           TextFormField(
                             controller: _passwordController,
                             obscureText: !_isPasswordVisible,
@@ -158,7 +160,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               prefixIcon: const Icon(Icons.lock),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -181,7 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          
+
                           TextFormField(
                             controller: _confirmPasswordController,
                             obscureText: !_isConfirmPasswordVisible,
@@ -190,11 +194,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               prefixIcon: const Icon(Icons.lock_outline),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  _isConfirmPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                 ),
                                 onPressed: () {
                                   setState(() {
-                                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                                    _isConfirmPasswordVisible =
+                                        !_isConfirmPasswordVisible;
                                   });
                                 },
                               ),
@@ -213,7 +220,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                           const SizedBox(height: 24),
-                          
+
                           // Register button
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -236,13 +243,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
-                          
+
                           // Loading indicator
                           if (authProvider.isLoading) ...[
                             const SizedBox(height: 16),
                             const Center(child: CircularProgressIndicator()),
                           ],
-                          
+
                           // Error message
                           if (authProvider.errorMessage != null) ...[
                             const SizedBox(height: 16),
@@ -262,9 +269,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                           ],
-                          
+
                           const SizedBox(height: 16),
-                          
+
                           // Return to login link
                           Center(
                             child: TextButton(
@@ -294,7 +301,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final name = _nameController.text.trim();
-    
+
     authProvider.createUserWithEmailAndPassword(email, password, name);
   }
-} 
+}

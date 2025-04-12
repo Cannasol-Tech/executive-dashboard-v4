@@ -1,6 +1,6 @@
 // NOTE: Ensure that the 'cloud_firestore' package is correctly added in your pubspec.yaml.
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:executive_dashboard/models/email_analysis_data.dart';
+import 'package:executive_dashboard/features/email/email_analysis_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 /// Represents the data structure for the Analysis screen fetched from Firestore.

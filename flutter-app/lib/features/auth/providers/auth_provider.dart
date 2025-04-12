@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import '../../models/user_model.dart';
-import '../../services/services.dart';
+import '../models/user_model.dart';
+import '../../../core/services/services.dart';
 
 /// Provider for handling authentication state
 class AuthProvider with ChangeNotifier {
@@ -21,7 +21,7 @@ class AuthProvider with ChangeNotifier {
   String? get userEmail => _currentUser?.email;
 
   /// Expose the auth state changes stream
-  Stream<User?> get authStateChanges {
+  Stream<UserModel?> get authStateChanges {
     if (_authService is AuthService) {
       return (_authService as AuthService).authStateChanges;
     }
@@ -89,7 +89,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Load additional user data from Firestore
-  Future<void> _loadUserData(User user) async {
+  Future<void> _loadUserData(UserModel user) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
