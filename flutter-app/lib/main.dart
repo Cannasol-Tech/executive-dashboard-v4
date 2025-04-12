@@ -1,18 +1,22 @@
+import 'package:executive_dashboard/config/app_theme.dart';
+import 'package:executive_dashboard/config/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'config/theme.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'firebase_options.dart';
-import 'core/providers/auth_provider.dart';
-import 'core/providers/dashboard_summary_provider.dart';
-import 'core/providers/analysis_data_provider.dart';
-import 'features/dashboard/dashboard_screen.dart';
-import 'features/auth/login_screen.dart';
-import 'features/auth/register_screen.dart';
+import 'features/auth/providers/auth_provider.dart';
+import 'features/dashboard/providers/dashboard_summary_provider.dart';
+import 'features/analysis/providers/analysis_data_provider.dart';
+import 'features/email/providers/email_provider.dart';
+import 'features/dashboard/screens/dashboard_screen.dart';
+import 'features/auth/screens/login_screen.dart';
+import 'features/auth/screens/register_screen.dart';
 import 'features/analysis/screens/analysis_screen.dart';
+import 'features/email/screens/email_inbox_screen.dart';
 import 'features/shared/screens/coming_soon_screen.dart';
-import 'services/secure_storage_service.dart';
+import 'core/services/secure_storage_service.dart';
+import 'core/services/env_config_service.dart';
 
 // For complete Firebase setup, you would need to:
 // 1. Run `flutterfire configure` to create firebase_options.dart with your actual Firebase project credentials
@@ -24,6 +28,11 @@ void main() async {
   bool firebaseInitialized = false;
 
   try {
+    // Initialize environment configuration
+    final env = EnvConfigService();
+    await env.initialize(env: kReleaseMode ? 'production' : 'development');
+    print('Environment configuration initialized: ${env.currentEnvironment}');
+
     // Initialize Firebase using the generated options from firebase_options.dart
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -36,7 +45,7 @@ void main() async {
     final secureStorage = SecureStorageService();
     print('Secure storage initialized');
   } catch (e) {
-    print('Failed to initialize Firebase or secure storage: $e');
+    print('Failed to initialize Firebase or services: $e');
 
     // Log more detailed error information for debugging
     if (e is FirebaseException) {
@@ -61,13 +70,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => DashboardSummaryProvider()),
         ChangeNotifierProvider(create: (_) => AnalysisDataProvider()),
+        ChangeNotifierProvider(create: (_) => EmailProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: Consumer<AuthProvider>(
-        builder: (context, authProvider, _) {
+      child: Consumer2<AuthProvider, ThemeProvider>(
+        builder: (context, authProvider, themeProvider, child) {
           return MaterialApp(
             title: 'Cannasol Executive Dashboard',
             debugShowCheckedModeBanner: false,
-            theme: AppTheme.darkTheme(),
+            theme: themeProvider.currentTheme,
             initialRoute: '/',
             routes: {
               '/': (context) => firebaseInitialized
@@ -77,8 +88,7 @@ class MyApp extends StatelessWidget {
               '/register': (context) => const RegisterScreen(),
               '/dashboard': (context) => const DashboardScreen(),
               '/analysis': (context) => const AnalysisScreen(),
-              '/email': (context) =>
-                  const ComingSoonScreen(featureName: 'Email Management'),
+              '/email': (context) => const EmailInboxScreen(),
               '/chat': (context) =>
                   const ComingSoonScreen(featureName: 'Chat Interface'),
               '/documents': (context) =>

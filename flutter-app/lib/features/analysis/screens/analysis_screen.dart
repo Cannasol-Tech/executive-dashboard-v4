@@ -1,9 +1,9 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../config/theme.dart';
-import '../../../../core/providers/analysis_data_provider.dart';
-import '../../../models/analysis_data.dart';
+import '../providers/analysis_data_provider.dart';
+import '../models/analysis_data.dart';
 import '../widgets/content_accuracy_chart.dart';
 import '../widgets/radial_progress_chart.dart';
 
@@ -816,7 +816,6 @@ class AnalysisScreen extends StatelessWidget {
     required Color color,
   }) {
     final theme = Theme.of(context);
-
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(

@@ -34,7 +34,6 @@ The Cannasol Technologies Executive Dashboard is a Flutter-based application wit
 
 2. **Project Repository Setup**
    ```bash
-  
    # Set up Flutter project
    flutter create --platforms=web --org=com.cannasol .
    
@@ -47,37 +46,81 @@ The Cannasol Technologies Executive Dashboard is a Flutter-based application wit
 3. **Directory Structure Creation**
    Create the following directory structure:
    ```
-
-flutter-app/
-   ├── lib/                        # Flutter source code
-   │   ├── config/                 # Configuration files
-   │   ├── core/                   # Core application code
-   │   ├── features/               # Feature modules
-   │   │   ├── analytics/          # Analytics dashboard
-   │   │   ├── blog/               # Company blog management
-   │   │   ├── chatbot/            # AI assistant chatbot
-   │   │   ├── email/              # Email management
-   │   │   ├── seo/                # SEO and Google Ads
-   │   │   └── settings/           # Application settings
-   │   ├── models/                 # Data models
-   │   ├── services/               # Service interfaces
-   │   ├── shared/                 # Shared components
+   flutter-app/
+   ├── lib/                       # Flutter source code
+   │   ├── config/                # Configuration files
+   │   ├── core/                  # Core application code
+   │   ├── features/              # Feature modules
+   │   │   ├── analytics/         # Analytics dashboard
+   │   │   │   ├── models/        # Data models for analytics
+   │   │   │   ├── providers/     # State management for analytics
+   │   │   │   ├── screens/       # Analytics UI screens
+   │   │   │   ├── widgets/       # Analytics UI components
+   │   │   │   └── services/      # Analytics services
+   │   │   │
+   │   │   ├── blog/              # Company blog management
+   │   │   │   ├── models/        # Data models for blog
+   │   │   │   ├── providers/     # State management for blog
+   │   │   │   ├── screens/       # Blog UI screens
+   │   │   │   ├── widgets/       # Blog UI components
+   │   │   │   └── services/      # Blog services
+   │   │   │
+   │   │   ├── chatbot/           # AI assistant chatbot
+   │   │   │   ├── models/        # Data models for chatbot
+   │   │   │   ├── providers/     # State management for chatbot
+   │   │   │   ├── screens/       # Chatbot UI screens
+   │   │   │   ├── widgets/       # Chatbot UI components
+   │   │   │   └── services/      # Chatbot services
+   │   │   │
+   │   │   ├── email/             # Email management
+   │   │   │   ├── models/        # Data models for email
+   │   │   │   ├── providers/     # State management for email
+   │   │   │   ├── screens/       # Email UI screens
+   │   │   │   ├── widgets/       # Email UI components
+   │   │   │   └── services/      # Email services
+   │   │   │
+   │   │   ├── document_generator/ # Document generator feature
+   │   │   │   ├── models/        # Data models for documents
+   │   │   │   ├── providers/     # State management for documents
+   │   │   │   ├── screens/       # Document UI screens
+   │   │   │   ├── widgets/       # Document UI components
+   │   │   │   └── services/      # Document services
+   │   │   │
+   │   │   ├── seo/               # SEO and Google Ads
+   │   │   │   ├── models/        # Data models for SEO
+   │   │   │   ├── providers/     # State management for SEO
+   │   │   │   ├── screens/       # SEO UI screens
+   │   │   │   ├── widgets/       # SEO UI components
+   │   │   │   └── services/      # SEO services
+   │   │   │
+   │   │   └── settings/          # Application settings
+   │   │       ├── models/        # Settings models
+   │   │       ├── providers/     # Settings state management
+   │   │       ├── screens/       # Settings UI screens
+   │   │       ├── widgets/       # Settings UI components
+   │   │       └── services/      # Settings services
+   │   │
+   │   ├── models/                # Global data models
+   │   ├── services/              # Global service interfaces
+   │   ├── shared/                # Shared components
    │   └── main.dart              # Application entry point
-   ├── functions/                  # Cloud Functions
-   │   ├── src/                    # Source code
-   │   │   ├── analytics/          # Analytics functions
-   │   │   ├── blog/               # Blog management functions
-   │   │   ├── chatbot/            # Chatbot functions
-   │   │   ├── email/              # Email processing functions
-   │   │   └── seo/                # SEO functions
-   │   ├── index.ts                # Functions entry point
-   │   └── requirements.txt        # Python dependencies
-   ├── test/                       # Test directory
-   │   ├── unit/                   # Unit tests
-   │   ├── widget/                 # Widget tests
-   │   └── integration/            # Integration tests
-   └── web/                        # Web-specific assets
+   ├── functions/                 # Cloud Functions
+   │   ├── src/                   # Source code
+   │   │   ├── analytics/         # Analytics functions
+   │   │   ├── blog/              # Blog management functions
+   │   │   ├── chatbot/           # Chatbot functions
+   │   │   ├── email/             # Email processing functions
+   │   │   └── seo/               # SEO functions
+   │   ├── index.ts               # Functions entry point
+   │   └── requirements.txt       # Python dependencies
+   ├── test/                      # Test directory
+   │   ├── unit/                  # Unit tests
+   │   ├── widget/                # Widget tests
+   │   └── integration/           # Integration tests
+   └── web/                       # Web-specific assets
    ```
+   
+    -- Add the Directory Structure to the file Axovia/codebase-structure.md
 
 4. **Firebase Configuration**
    ```bash

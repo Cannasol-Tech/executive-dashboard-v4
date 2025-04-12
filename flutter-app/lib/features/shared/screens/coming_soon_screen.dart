@@ -1,13 +1,13 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../../../config/theme.dart';
 
 /// A visually sophisticated placeholder screen for features that are not yet implemented
 class ComingSoonScreen extends StatefulWidget {
   final String featureName;
-  
+
   const ComingSoonScreen({
-    Key? key, 
+    Key? key,
     required this.featureName,
   }) : super(key: key);
 
@@ -15,7 +15,8 @@ class ComingSoonScreen extends StatefulWidget {
   State<ComingSoonScreen> createState() => _ComingSoonScreenState();
 }
 
-class _ComingSoonScreenState extends State<ComingSoonScreen> with SingleTickerProviderStateMixin {
+class _ComingSoonScreenState extends State<ComingSoonScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _rotationAnimation;
   late Animation<double> _scaleAnimation;
@@ -38,7 +39,8 @@ class _ComingSoonScreenState extends State<ComingSoonScreen> with SingleTickerPr
 
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.05), weight: 1),
-      TweenSequenceItem(tween: Tween<double>(begin: 1.05, end: 0.95), weight: 1),
+      TweenSequenceItem(
+          tween: Tween<double>(begin: 1.05, end: 0.95), weight: 1),
       TweenSequenceItem(tween: Tween<double>(begin: 0.95, end: 1.0), weight: 1),
     ]).animate(
       CurvedAnimation(
@@ -83,7 +85,8 @@ class _ComingSoonScreenState extends State<ComingSoonScreen> with SingleTickerPr
             end: Alignment.bottomRight,
             colors: [
               AppTheme.deepOcean,
-              Color.lerp(AppTheme.deepOcean, featureColor, 0.15) ?? AppTheme.deepOcean,
+              Color.lerp(AppTheme.deepOcean, featureColor, 0.15) ??
+                  AppTheme.deepOcean,
             ],
           ),
         ),
@@ -131,11 +134,13 @@ class _ComingSoonScreenState extends State<ComingSoonScreen> with SingleTickerPr
                                       border: Border.all(
                                         color: featureColor.withOpacity(0.3),
                                         width: 2,
-                                        strokeAlign: BorderSide.strokeAlignOutside,
+                                        strokeAlign:
+                                            BorderSide.strokeAlignOutside,
                                       ),
                                     ),
                                     child: CustomPaint(
-                                      painter: DottedCirclePainter(color: featureColor),
+                                      painter: DottedCirclePainter(
+                                          color: featureColor),
                                     ),
                                   ),
                                 ),
@@ -153,32 +158,32 @@ class _ComingSoonScreenState extends State<ComingSoonScreen> with SingleTickerPr
                     },
                   ),
                   const SizedBox(height: 40),
-                  
+
                   // Title with shimmer effect
                   ShimmerText(
                     baseColor: Colors.white.withOpacity(0.8),
                     highlightColor: featureColor,
                     text: '${widget.featureName} Coming Soon',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
                     textAlign: TextAlign.center,
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   Text(
                     'Our team is working diligently to build this feature for you. Check back soon to enjoy the full functionality.',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppTheme.moonlight.withOpacity(0.8),
-                      height: 1.5,
-                    ),
+                          color: AppTheme.moonlight.withOpacity(0.8),
+                          height: 1.5,
+                        ),
                     textAlign: TextAlign.center,
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Feature description
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 16),
@@ -194,15 +199,15 @@ class _ComingSoonScreenState extends State<ComingSoonScreen> with SingleTickerPr
                     child: Text(
                       _getFeatureDescription(),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.moonlight.withOpacity(0.7),
-                        height: 1.6,
-                      ),
+                            color: AppTheme.moonlight.withOpacity(0.7),
+                            height: 1.6,
+                          ),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Back button with hover effect
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
@@ -275,9 +280,11 @@ class _ComingSoonScreenState extends State<ComingSoonScreen> with SingleTickerPr
       case 'seo':
         return AppTheme.warningAmber;
       case 'blog manager':
-        return Color.lerp(AppTheme.emeraldGleam, AppTheme.royalAzure, 0.5) ?? AppTheme.emeraldGleam;
+        return Color.lerp(AppTheme.emeraldGleam, AppTheme.royalAzure, 0.5) ??
+            AppTheme.emeraldGleam;
       case 'ai insights':
-        return Color.lerp(AppTheme.emeraldGleam, AppTheme.warningAmber, 0.3) ?? AppTheme.emeraldGleam;
+        return Color.lerp(AppTheme.emeraldGleam, AppTheme.warningAmber, 0.3) ??
+            AppTheme.emeraldGleam;
       case 'settings':
         return AppTheme.slate;
       default:
@@ -330,7 +337,8 @@ class ShimmerText extends StatefulWidget {
   State<ShimmerText> createState() => _ShimmerTextState();
 }
 
-class _ShimmerTextState extends State<ShimmerText> with SingleTickerProviderStateMixin {
+class _ShimmerTextState extends State<ShimmerText>
+    with SingleTickerProviderStateMixin {
   late AnimationController _shimmerController;
 
   @override
@@ -397,23 +405,23 @@ class _SlidingGradientTransform extends GradientTransform {
 /// Custom painter for dotted circle effect
 class DottedCirclePainter extends CustomPainter {
   final Color color;
-  
+
   DottedCirclePainter({required this.color});
-  
+
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..color = color
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
-      
+
     final double centerX = size.width / 2;
     final double centerY = size.height / 2;
     final double radius = size.width / 2;
-    
+
     // Draw dotted circle
     double arcLength = 2 * math.pi / 24; // 24 segments
-    
+
     for (int i = 0; i < 24; i++) {
       // Draw arc for even segments only (to create the dotted effect)
       if (i % 2 == 0) {
@@ -428,9 +436,9 @@ class DottedCirclePainter extends CustomPainter {
       }
     }
   }
-  
+
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return false;
   }
-} 
+}

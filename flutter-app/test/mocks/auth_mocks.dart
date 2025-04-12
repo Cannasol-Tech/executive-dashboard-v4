@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../lib/services/services.dart';
-import '../../lib/models/user_model.dart';
+import '../../lib/core/services/services.dart';
+import '../../lib/features/auth/models/user_model.dart';
 
 // Mock Firebase Auth User
-class MockUser implements User {
+class MockUser implements UserModel {
   final String _uid;
   final String? _email;
   final String? _displayName;
@@ -21,10 +21,10 @@ class MockUser implements User {
   String get uid => _uid;
 
   @override
-  String? get email => _email;
+  String get email => _email ?? '';
 
   @override
-  String? get displayName => _displayName;
+  String get displayName => _displayName ?? '';
 
   @override
   String? get photoURL => null;
@@ -46,7 +46,7 @@ class MockUserCredential implements UserCredential {
   MockUserCredential({MockUser? user}) : _user = user ?? MockUser();
 
   @override
-  User? get user => _user;
+  UserModel? get user => _user;
 
   @override
   AdditionalUserInfo? get additionalUserInfo => null;
@@ -134,26 +134,33 @@ class MockSecureStorageService implements SecureStorageService {
 
 // Test implementation of AuthService for testing
 class TestAuthService implements AuthServiceInterface {
-  final _authStateController = StreamController<User?>.broadcast();
-  User? _mockCurrentUser;
+  final _authStateController = StreamController<UserModel?>.broadcast();
+  UserModel? _mockCurrentUser;
   final MockSecureStorageService _secureStorage;
 
   TestAuthService({
     MockSecureStorageService? secureStorage,
-    User? initialUser,
+    UserModel? initialUser,
   })  : _secureStorage = secureStorage ?? MockSecureStorageService(),
         _mockCurrentUser = initialUser;
 
   @override
-  Stream<User?> get authStateChanges => _authStateController.stream;
+  Stream<UserModel> get authStateChanges => _authStateController.stream
+      .where((user) => user != null)
+      .cast<UserModel>();
 
   @override
-  User? get currentUser => _mockCurrentUser;
+  UserModel get currentUser {
+    if (_mockCurrentUser == null) {
+      throw Exception('No current user');
+    }
+    return _mockCurrentUser as UserModel;
+  }
 
   @override
   bool get isAuthenticated => _mockCurrentUser != null;
 
-  void emitAuthState(User? user) {
+  void emitAuthState(UserModel? user) {
     _mockCurrentUser = user;
     _authStateController.add(user);
   }

@@ -1,9 +1,9 @@
+import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../config/theme.dart';
-import '../../../core/providers/email_provider.dart';
+import '../providers/email_provider.dart';
 import '../widgets/email_actions_panel.dart';
-import '../../../models/email.dart';
+import '../email.dart';
 import '../widgets/email_list_item.dart';
 
 class EmailInboxScreen extends StatefulWidget {

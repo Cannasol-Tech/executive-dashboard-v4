@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:executive_dashboard/core/providers/auth_provider.dart';
-import 'package:executive_dashboard/features/auth/login_screen.dart';
-import 'package:executive_dashboard/features/dashboard/dashboard_screen.dart';
+import 'package:executive_dashboard/features/auth/providers/auth_provider.dart';
+import 'package:executive_dashboard/features/auth/screens/login_screen.dart';
+import 'package:executive_dashboard/features/dashboard/screens/dashboard_screen.dart';
 import 'package:executive_dashboard/main.dart';
 import '../mocks/auth_mocks.dart';
 

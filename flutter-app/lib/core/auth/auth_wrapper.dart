@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
+import '../../features/auth/providers/auth_provider.dart';
 
 /// A wrapper widget that handles authentication state
 /// and directs users to either the login screen or the child widget
