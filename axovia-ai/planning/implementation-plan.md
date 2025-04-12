@@ -49,7 +49,7 @@ This document serves as the definitive task tracking system for the Cannasol Tec
 - [x] **[MVP]** Create initial data loading state
 - [x] **[MVP]** Set up state management
 - [x] **[MVP]** Implement login dialog
-- [ ] **[MVP]** Test layout across different devices
+- [x] **[MVP]** Test layout across different devices
 - [x] **[MVP]** **Create tabs in the side menu for every planned feature pointing to a screen that displays "Feature coming soon"**
 
 ### **3. Analytics Implementation (`3-analytics-implementation.md`)**
@@ -92,18 +92,36 @@ This document serves as the definitive task tracking system for the Cannasol Tec
 
 ### **6. Deployment Configuration (`6-deployment-configuration.md`)**
 - [x] **[MVP]** Set up Firebase hosting
-- [ ] **[MVP]** Create environment configuration
+- [x] **[MVP]** Create environment configuration
+- [x] **[MVP]** Implement security configuration
+- [x] **[MVP]** Create deployment scripts for different environments
+- [x] **[MVP]** Perform final testing
 - [ ] **[v2]** Implement continuous integration
 - [ ] **[v2]** Create continuous deployment
 - [ ] **[v2]** Implement monitoring configuration
-- [ ] **[MVP]** Create security configuration
 - [ ] **[v3]** Implement backup strategy
 - [ ] **[v2]** Create release management
 - [ ] **[v3]** Implement performance optimization
-- [ ] **[v2]** Create documentation
-- [ ] **[MVP]** Perform final testing
 
-### **7. Chatbot Interface Implementation (`7-chatbot-interface.md`)**
+## Current Implementation Task
+
+### **7. Document Generator Implementation (`7-document-generator.md`)** 🔄 (In Progress)
+- [ ] **[MVP]** Create document request interface with template selection dropdown
+- [ ] **[MVP]** Implement dynamic form generation based on selected template
+- [ ] **[MVP]** Add document privacy options (one-time, private, shared)
+- [ ] **[MVP]** Implement document template upload interface
+- [ ] **[MVP]** Create document generation status tracker
+- [ ] **[MVP]** Develop generated documents browser (user and shared views)
+- [ ] **[MVP]** Implement secure document download functionality
+- [ ] **[MVP]** Create database services for all document collections
+- [ ] **[v2]** Add filtering and sorting to document browser
+- [ ] **[v2]** Implement document preview functionality
+- [ ] **[v3]** Create template modification interface
+- [ ] **[MVP]** Test with sample document templates and generated documents
+
+## Future Tasks
+
+### **8. Chatbot Interface Implementation (`8-chatbot-interface.md`)**
 - [ ] **[MVP]** Create chat interface layout
 - [ ] **[MVP]** Implement chat service
 - [ ] **[MVP]** Create message display components
@@ -115,17 +133,6 @@ This document serves as the definitive task tracking system for the Cannasol Tec
 - [ ] **[v2]** Create suggested actions
 - [ ] **[v3]** Implement chat settings
 - [ ] **[MVP]** Test with dummy endpoint
-
-### **8. Document Viewer & Downloader Implementation (`8-document-generator.md`)**
-- [ ] **[MVP]** Create generated document list view (UI)
-- [ ] **[MVP]** Implement document database service (fetch list, real-time updates)
-- [ ] **[v2]** Implement document preview functionality
-- [ ] **[MVP]** Implement secure document download mechanism
-- [ ] **[v2]** Add sorting and filtering/categorization to list view
-- [ ] **[MVP]** Create state management/provider for documents
-- [ ] **[MVP]** Implement error handling for DB and download
-- [ ] **[v2]** Design clean layout for browsing (grid/list, pagination)
-- [ ] **[MVP]** Test with sample generated documents
 
 ## Phase 3: Extended Features
 
