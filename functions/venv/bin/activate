@@ -40,10 +40,10 @@ deactivate nondestructive
 if [ "${OSTYPE:-}" = "cygwin" ] || [ "${OSTYPE:-}" = "msys" ] ; then
     # transform D:\path\to\venv to /d/path/to/venv on MSYS
     # and to /cygdrive/d/path/to/venv on Cygwin
-    export VIRTUAL_ENV=$(cygpath /Users/Stephen/Documents/GitHub/cannasol-technologies/executive-dashboard-v4/functions/venv)
+    export VIRTUAL_ENV=$(cygpath /Users/Stephen/Documents/GitHub/cannasol-technologies/executive-dashboard/flutter-app/functions/venv)
 else
     # use the path as-is
-    export VIRTUAL_ENV=/Users/Stephen/Documents/GitHub/cannasol-technologies/executive-dashboard-v4/functions/venv
+    export VIRTUAL_ENV=/Users/Stephen/Documents/GitHub/cannasol-technologies/executive-dashboard/flutter-app/functions/venv
 fi
 
 _OLD_VIRTUAL_PATH="$PATH"

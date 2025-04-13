@@ -1,4 +1,4 @@
-#!/Users/Stephen/Documents/GitHub/cannasol-technologies/executive-dashboard-v4/functions/venv/bin/python3.12
+#!/Users/Stephen/Documents/GitHub/cannasol-technologies/executive-dashboard/flutter-app/functions/venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys

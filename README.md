@@ -4,7 +4,34 @@ A Flutter-based web application that serves as a user interface layer to the Fir
 
 ## Project Structure
 
-- `flutter-app/` - Main Flutter application
+- `lib/` - Flutter application code
+- `pubspec.yaml` - Flutter project configuration
+- `firebase.json` - Firebase project configuration
+- `functions/` - Cloud Functions for Firebase
+
+## Getting Started
+
+To get started with the project, follow these steps:
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/cannasol-executive-dashboard.git
+```
+
+2. Navigate to the project directory:
+
+```bash
+cd cannasol-executive-dashboard
+```
+
+3. Install dependencies:
+
+```bash
+flutter pub get
+```
+
+4. Run the application:
 - `functions/` - Cloud Functions for Firebase
 
 ## Running the Application

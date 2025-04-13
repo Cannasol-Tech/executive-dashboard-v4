@@ -4,10 +4,10 @@
 This checklist must be completed before beginning any implementation task for the Cannasol Technologies Executive Dashboard project to ensure proper preparation, prevent duplication, and validate task readiness.
 
 ## Task Details
-- [x] **Task Name:** Document Generator Implementation
-- [x] **Feature Prompt:** 7-document-generator.md
+- [x] **Task Name:** Chatbot Interface Implementation
+- [x] **Feature Prompt:** 8-chatbot-interface.md
 - [x] **Priority:** High
-- [x] **Status:** In Progress
+- [x] **Status:** Ready to Start
 
 ## Communication Protocol
 
@@ -81,13 +81,13 @@ If ANY item in this checklist cannot be completed or ANY confusion arises:
 
 ## Feature-Specific Checks
 
-### For Document Generator Features
-- [x] Verify Firebase DB structure for document templates collection
-- [x] Check existing file upload components for reuse
-- [x] Confirm document generation status tracking approach
-- [x] Verify Firebase Storage setup for document template storage
-- [x] Check Firebase security rules for document access control
-- [x] Verify dynamic form generation approach for template fields
+### For Chatbot Interface Features
+- [x] Verify Firebase DB structure for chat message collection
+- [x] Check existing UI components for message display
+- [x] Confirm approach for real-time message updates
+- [x] Verify any backend API endpoints available for chat functionality
+- [x] Check authentication requirements for chat service
+- [x] Verify approach for handling rich message types
 
 ## Communication Check
 - [x] Review axovia-ai/communication/requests-to-human.md for any pending answers
