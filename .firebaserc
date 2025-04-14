@@ -1,0 +1,31 @@
+{
+  "projects": {
+    "default": "cannasol-executive-dashboard",
+    "development": "cannasol-executive-dashboard-dev",
+    "staging": "cannasol-executive-dashboard-staging",
+    "production": "cannasol-executive-dashboard"
+  },
+  "targets": {
+    "cannasol-executive-dashboard-dev": {
+      "hosting": {
+        "development": [
+          "cannasol-executive-dashboard-dev"
+        ]
+      }
+    },
+    "cannasol-executive-dashboard-staging": {
+      "hosting": {
+        "staging": [
+          "cannasol-executive-dashboard-staging"
+        ]
+      }
+    },
+    "cannasol-executive-dashboard": {
+      "hosting": {
+        "production": [
+          "cannasol-executive-dashboard"
+        ]
+      }
+    }
+  }
+}
