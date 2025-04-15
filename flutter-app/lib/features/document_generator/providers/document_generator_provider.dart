@@ -336,6 +336,82 @@ class DocumentGeneratorProvider extends ChangeNotifier {
     }
   }
 
+  // Template upload methods
+  Future<String> uploadTemplate({
+    required String name,
+    required String description,
+    required String category,
+    required Uint8List fileData,
+    required String fileName,
+    required List<DocumentField> fields,
+    Map<String, dynamic>? metadata,
+  }) async {
+    try {
+      // 1. Create a reference in Firestore to get an ID
+      final templateRef = _firestore.collection('documentTemplates').doc();
+      final templateId = templateRef.id;
+
+      // 2. Upload the template file to Storage
+      final storageRef =
+          _storage.ref().child('templates/$templateId/$fileName');
+      final uploadTask = storageRef.putData(
+        fileData,
+        SettableMetadata(contentType: _getContentType(fileName)),
+      );
+
+      // 3. Wait for upload to complete and get download URL
+      final snapshot = await uploadTask;
+      final storageUrl = await snapshot.ref.getDownloadURL();
+
+      // 4. Create the document template with the file URL
+      final template = DocumentTemplate(
+        id: templateId,
+        name: name,
+        description: description,
+        category: category,
+        storageUrl: storageUrl,
+        fields: fields,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        metadata: metadata ?? {},
+        isActive: true,
+      );
+
+      // 5. Save the template to Firestore
+      await templateRef.set(template.toMap());
+
+      // 6. Refresh templates list
+      await fetchTemplates();
+
+      return templateId;
+    } catch (e) {
+      print('Error uploading template: $e');
+      throw Exception('Failed to upload template: $e');
+    }
+  }
+
+  String _getContentType(String fileName) {
+    final extension = fileName.split('.').last.toLowerCase();
+
+    switch (extension) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'doc':
+      case 'docx':
+        return 'application/msword';
+      case 'xls':
+      case 'xlsx':
+        return 'application/vnd.ms-excel';
+      case 'ppt':
+      case 'pptx':
+        return 'application/vnd.ms-powerpoint';
+      case 'txt':
+        return 'text/plain';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+
   // Status tracking methods
   Stream<GeneratorStatus?> getStatusStream(String requestId) {
     return _firestore

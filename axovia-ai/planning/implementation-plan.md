@@ -116,16 +116,19 @@ This document serves as the definitive task tracking system for the Cannasol Tec
 - [ ] **[v3]** Implement chat settings
 - [ ] **[MVP]** Test with dummy endpoint
 
-### **8. Document Viewer & Downloader Implementation (`8-document-generator.md`)**
-- [ ] **[MVP]** Create generated document list view (UI)
-- [ ] **[MVP]** Implement document database service (fetch list, real-time updates)
+### **8. Document Viewer & Downloader Implementation (`8-document-generator.md`)** 🔄 (In Progress)
+- [x] **[MVP]** Create document request interface with template selection dropdown
+- [x] **[MVP]** Implement dynamic form generation based on selected template
+- [x] **[MVP]** Add document privacy options (one-time, private, shared)
+- [x] **[MVP]** Implement document template upload interface
+- [x] **[MVP]** Create document generation status tracker
+- [x] **[MVP]** Develop generated documents browser (user and shared views)
+- [x] **[MVP]** Implement secure document download functionality
+- [x] **[MVP]** Create database services for all document collections
+- [x] **[v2]** Add filtering and sorting to document browser
 - [ ] **[v2]** Implement document preview functionality
-- [ ] **[MVP]** Implement secure document download mechanism
-- [ ] **[v2]** Add sorting and filtering/categorization to list view
-- [ ] **[MVP]** Create state management/provider for documents
-- [ ] **[MVP]** Implement error handling for DB and download
-- [ ] **[v2]** Design clean layout for browsing (grid/list, pagination)
-- [ ] **[MVP]** Test with sample generated documents
+- [ ] **[v3]** Create template modification interface
+- [ ] **[MVP]** Test with sample document templates and generated documents
 
 ## Phase 3: Extended Features
 
