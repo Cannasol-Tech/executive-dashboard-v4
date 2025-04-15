@@ -1,5 +1,5 @@
 import 'package:executive_dashboard/config/app_theme.dart';
-import 'package:executive_dashboard/features/document_generator/%20providers/document_generator_provider.dart';
+import 'package:executive_dashboard/features/document_generator/providers/document_generator_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/document_request.dart';
@@ -166,11 +166,10 @@ class DocumentStatusTracker extends StatelessWidget {
         ],
 
         // Error message if present
-        if (status.message != null &&
-            status.status == DocumentRequestStatus.failed) ...[
+        if (status.status == DocumentRequestStatus.failed) ...[
           const SizedBox(height: 4),
           Text(
-            status.message!,
+            status.message,
             style: TextStyle(
               color: AppTheme.errorRuby,
               fontSize: 12,

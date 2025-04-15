@@ -1,7 +1,7 @@
 import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../ providers/document_generator_provider.dart';
+import '../providers/document_generator_provider.dart';
 
 import '../widgets/document_request_form.dart';
 import '../widgets/generated_documents_list.dart';

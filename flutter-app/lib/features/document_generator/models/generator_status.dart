@@ -90,9 +90,7 @@ class GeneratorStatus {
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
 
-    if (message != null) {
-      map['message'] = message;
-    }
+    map['message'] = message;
 
     return map;
   }

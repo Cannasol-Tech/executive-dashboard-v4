@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/email_provider.dart';
-import '../email.dart';
-import '../email_task.dart';
+import '../models/email.dart';
+import '../models/email_task.dart';
 import '../widgets/task_item_widget.dart';
 
 class EmailDetailScreen extends StatefulWidget {

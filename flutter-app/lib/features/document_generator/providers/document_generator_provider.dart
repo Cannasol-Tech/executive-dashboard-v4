@@ -1,236 +1,388 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
-import '../../auth/models/user_model.dart';
-import '../models/document_request.dart';
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/document_template.dart';
+import '../models/document_request.dart';
 import '../models/generated_document.dart';
-import '../services/document_request_service.dart';
-import '../services/document_template_service.dart';
-import '../services/generated_document_service.dart';
+import '../models/generator_status.dart';
+import '../../auth/models/user_model.dart';
+import '../../auth/services/auth_service.dart';
 
-/// Provider for managing document generator state
 class DocumentGeneratorProvider extends ChangeNotifier {
-  // Services
-  final DocumentTemplateService _templateService;
-  final DocumentRequestService _requestService;
-  final GeneratedDocumentService _documentService;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final AuthService _authService = AuthService();
 
-  // User
-  final UserModel currentUser;
-
-  // Data
-  List<DocumentTemplate> _templates = [];
-  List<DocumentRequest> _userRequests = [];
+  // User documents
   List<GeneratedDocument> _userDocuments = [];
+  bool _isLoadingUserDocuments = false;
+
+  // Shared documents
   List<GeneratedDocument> _sharedDocuments = [];
+  bool _isLoadingSharedDocuments = false;
 
-  // Subscription handles
-  StreamSubscription? _templatesSubscription;
-  StreamSubscription? _userRequestsSubscription;
-  StreamSubscription? _userDocumentsSubscription;
-  StreamSubscription? _sharedDocumentsSubscription;
-
-  // Loading states
-  bool _isLoadingTemplates = false;
+  // Document requests
+  List<DocumentRequest> _userRequests = [];
   bool _isLoadingRequests = false;
-  bool _isLoadingDocuments = false;
-  bool _isLoadingShared = false;
-  bool _isSubmitting = false;
 
-  // Error handling
-  String? _errorMessage;
+  // Templates
+  List<DocumentTemplate> _templates = [];
+  bool _isLoadingTemplates = false;
 
-  // Selected template
+  // Selected template and form data
   DocumentTemplate? _selectedTemplate;
+  final Map<String, dynamic> _formData = {};
+  DocumentPrivacy _selectedPrivacy = DocumentPrivacy.private;
+
+  // Request submission state
+  bool _isSubmittingRequest = false;
+
+  // Status tracking
+  final Map<String, StreamSubscription<DocumentSnapshot>> _statusSubscriptions =
+      {};
 
   // Getters
-  bool get isLoadingTemplates => _isLoadingTemplates;
+  List<GeneratedDocument> get userDocuments => _userDocuments;
+  List<GeneratedDocument> get sharedDocuments => _sharedDocuments;
+  List<DocumentRequest> get userRequests => _userRequests;
+  List<DocumentTemplate> get templates => _templates;
+  bool get isLoadingUserDocuments => _isLoadingUserDocuments;
+  bool get isLoadingSharedDocuments => _isLoadingSharedDocuments;
   bool get isLoadingRequests => _isLoadingRequests;
-  bool get isLoadingDocuments => _isLoadingDocuments;
-  bool get isLoadingShared => _isLoadingShared;
-  bool get isSubmitting => _isSubmitting;
-  String? get errorMessage => _errorMessage;
-
-  List<DocumentTemplate> get templates => List.unmodifiable(_templates);
-  List<DocumentRequest> get userRequests => List.unmodifiable(_userRequests);
-  List<GeneratedDocument> get userDocuments =>
-      List.unmodifiable(_userDocuments);
-  List<GeneratedDocument> get sharedDocuments =>
-      List.unmodifiable(_sharedDocuments);
-
+  bool get isLoadingTemplates => _isLoadingTemplates;
+  bool get isSubmittingRequest => _isSubmittingRequest;
   DocumentTemplate? get selectedTemplate => _selectedTemplate;
+  Map<String, dynamic> get formData => _formData;
+  DocumentPrivacy get selectedPrivacy => _selectedPrivacy;
+  bool get hasSelectedTemplate => _selectedTemplate != null;
+  UserModel get currentUser =>
+      UserModel.fromFirebaseUser(_authService.currentUser);
 
-  DocumentGeneratorProvider({
-    required this.currentUser,
-    DocumentTemplateService? templateService,
-    DocumentRequestService? requestService,
-    GeneratedDocumentService? documentService,
-  })  : _templateService = templateService ?? DocumentTemplateService(),
-        _requestService = requestService ?? DocumentRequestService(),
-        _documentService = documentService ?? GeneratedDocumentService() {
-    _initStreams();
+  DocumentGeneratorProvider({required UserModel currentUser}) {
+    init();
+  }
+
+  void init() {
+    fetchTemplates();
+    fetchUserDocuments();
+    fetchSharedDocuments();
+    fetchUserRequests();
+  }
+
+  Future<void> refreshAllData() async {
+    await Future.wait([
+      fetchTemplates(),
+      fetchUserDocuments(),
+      fetchSharedDocuments(),
+      fetchUserRequests(),
+    ]);
+    notifyListeners();
+  }
+
+  // Template Methods
+  Future<void> fetchTemplates() async {
+    _isLoadingTemplates = true;
+    notifyListeners();
+
+    try {
+      final snapshot = await _firestore
+          .collection('documentTemplates')
+          .where('isActive', isEqualTo: true)
+          .orderBy('name')
+          .get();
+
+      _templates = snapshot.docs
+          .map((doc) => DocumentTemplate.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('Error fetching templates: $e');
+      _templates = [];
+    }
+
+    _isLoadingTemplates = false;
+    notifyListeners();
+  }
+
+  void selectTemplate(DocumentTemplate template) {
+    _selectedTemplate = template;
+
+    // Initialize form data with default values if available
+    _formData.clear();
+    for (var field in template.fields) {
+      if (field.defaultValue != null) {
+        _formData[field.name] = field.defaultValue;
+      }
+    }
+
+    notifyListeners();
+  }
+
+  void clearSelectedTemplate() {
+    _selectedTemplate = null;
+    _formData.clear();
+    notifyListeners();
+  }
+
+  void updateFormData(String fieldName, dynamic value) {
+    _formData[fieldName] = value;
+    notifyListeners();
+  }
+
+  void setPrivacy(DocumentPrivacy privacy) {
+    _selectedPrivacy = privacy;
+    notifyListeners();
+  }
+
+  // Document Request Methods
+  Future<String?> submitRequest() async {
+    if (_selectedTemplate == null) return null;
+
+    _isSubmittingRequest = true;
+    notifyListeners();
+
+    try {
+      final user = _authService.currentUser;
+
+      // Create request document
+      final requestData = {
+        'userId': user.uid,
+        'userName': user.displayName ?? user.email ?? 'Unknown User',
+        'templateId': _selectedTemplate!.id,
+        'templateName': _selectedTemplate!.name,
+        'formData': _formData,
+        'privacy': _selectedPrivacy == DocumentPrivacy.shared
+            ? 'shared'
+            : _selectedPrivacy == DocumentPrivacy.oneTime
+                ? 'oneTime'
+                : 'private',
+        'status': 'pending',
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+
+      final docRef =
+          await _firestore.collection('documentRequests').add(requestData);
+
+      // Create initial status document
+      await _firestore.collection('generatorStatus').doc(docRef.id).set({
+        'requestId': docRef.id,
+        'status': 'pending',
+        'progressPercentage': 0,
+        'currentStep': 'Queued for processing',
+        'remainingTimeInSeconds': 0,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      // Refresh requests list
+      await fetchUserRequests();
+
+      _isSubmittingRequest = false;
+      notifyListeners();
+
+      return docRef.id;
+    } catch (e) {
+      print('Error submitting request: $e');
+      _isSubmittingRequest = false;
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<void> fetchUserRequests() async {
+    final user = _authService.currentUser;
+
+    _isLoadingRequests = true;
+    notifyListeners();
+
+    try {
+      final snapshot = await _firestore
+          .collection('documentRequests')
+          .where('userId', isEqualTo: user.uid)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      _userRequests = snapshot.docs
+          .map((doc) => DocumentRequest.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('Error fetching user requests: $e');
+      _userRequests = [];
+    }
+
+    _isLoadingRequests = false;
+    notifyListeners();
+  }
+
+  // Generated Documents Methods
+  Future<void> fetchUserDocuments() async {
+    final user = _authService.currentUser;
+
+    _isLoadingUserDocuments = true;
+    notifyListeners();
+
+    try {
+      final snapshot = await _firestore
+          .collection('generatedDocuments')
+          .where('userId', isEqualTo: user.uid)
+          .where('isArchived', isEqualTo: false)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      _userDocuments = snapshot.docs
+          .map((doc) => GeneratedDocument.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('Error fetching user documents: $e');
+      _userDocuments = [];
+    }
+
+    _isLoadingUserDocuments = false;
+    notifyListeners();
+  }
+
+  Future<void> fetchSharedDocuments() async {
+    _isLoadingSharedDocuments = true;
+    notifyListeners();
+
+    try {
+      final snapshot = await _firestore
+          .collection('generatedDocuments')
+          .where('privacy', isEqualTo: 'shared')
+          .where('isArchived', isEqualTo: false)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      _sharedDocuments = snapshot.docs
+          .map((doc) => GeneratedDocument.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('Error fetching shared documents: $e');
+      _sharedDocuments = [];
+    }
+
+    _isLoadingSharedDocuments = false;
+    notifyListeners();
+  }
+
+  Future<Uint8List?> downloadDocument(
+      String documentId, DocumentPrivacy privacy) async {
+    try {
+      // Get document reference
+      final docRef =
+          _firestore.collection('generatedDocuments').doc(documentId);
+      final doc = await docRef.get();
+
+      if (!doc.exists) {
+        throw Exception('Document not found');
+      }
+
+      final document = GeneratedDocument.fromFirestore(doc);
+
+      // Download file from Firebase Storage
+      final ref = _storage.ref(document.storageUrl);
+      final data = await ref.getData();
+
+      // If this is a one-time document, delete it after download
+      if (privacy == DocumentPrivacy.oneTime) {
+        await docRef.delete();
+        await ref.delete();
+
+        // Refresh user documents list if it was a user document
+        if (document.userId == _authService.currentUser.uid) {
+          _userDocuments.removeWhere((doc) => doc.id == documentId);
+          notifyListeners();
+        }
+      }
+
+      return data;
+    } catch (e) {
+      print('Error downloading document: $e');
+      return null;
+    }
+  }
+
+  Future<void> deleteDocument(
+      String documentId, DocumentPrivacy privacy) async {
+    try {
+      // Get document reference
+      final docRef =
+          _firestore.collection('generatedDocuments').doc(documentId);
+      final doc = await docRef.get();
+
+      if (!doc.exists) {
+        throw Exception('Document not found');
+      }
+
+      final document = GeneratedDocument.fromFirestore(doc);
+
+      // Delete file from Firebase Storage
+      final ref = _storage.ref(document.storageUrl);
+      await ref.delete();
+
+      // Delete document from Firestore
+      await docRef.delete();
+
+      // Update UI
+      if (privacy == DocumentPrivacy.shared) {
+        _sharedDocuments.removeWhere((doc) => doc.id == documentId);
+      } else {
+        _userDocuments.removeWhere((doc) => doc.id == documentId);
+      }
+
+      notifyListeners();
+    } catch (e) {
+      print('Error deleting document: $e');
+    }
+  }
+
+  // Status tracking methods
+  Stream<GeneratorStatus?> getStatusStream(String requestId) {
+    return _firestore
+        .collection('generatorStatus')
+        .doc(requestId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return null;
+      return GeneratorStatus.fromFirestore(snapshot);
+    });
+  }
+
+  void startTrackingStatus(String requestId) {
+    // Cancel existing subscription if present
+    _statusSubscriptions[requestId]?.cancel();
+
+    // Set up new subscription
+    _statusSubscriptions[requestId] = _firestore
+        .collection('generatorStatus')
+        .doc(requestId)
+        .snapshots()
+        .listen((snapshot) {
+      // Handle status updates if needed
+      if (snapshot.exists) {
+        final status = GeneratorStatus.fromFirestore(snapshot);
+
+        // If the document generation is complete, refresh the documents list
+        if (status.status == DocumentRequestStatus.completed) {
+          fetchUserDocuments();
+          fetchSharedDocuments();
+        }
+      }
+    });
+  }
+
+  void stopTrackingStatus(String requestId) {
+    _statusSubscriptions[requestId]?.cancel();
+    _statusSubscriptions.remove(requestId);
   }
 
   @override
   void dispose() {
-    _templatesSubscription?.cancel();
-    _userRequestsSubscription?.cancel();
-    _userDocumentsSubscription?.cancel();
-    _sharedDocumentsSubscription?.cancel();
+    // Cancel all status tracking subscriptions
+    for (var subscription in _statusSubscriptions.values) {
+      subscription.cancel();
+    }
+    _statusSubscriptions.clear();
     super.dispose();
-  }
-
-  /// Initialize all data streams
-  void _initStreams() {
-    _loadTemplates();
-    _loadUserRequests();
-    _loadUserDocuments();
-    _loadSharedDocuments();
-  }
-
-  /// Refresh all data
-  void refreshAllData() {
-    _loadTemplates();
-    _loadUserRequests();
-    _loadUserDocuments();
-    _loadSharedDocuments();
-  }
-
-  /// Load document templates
-  void _loadTemplates() {
-    _isLoadingTemplates = true;
-    notifyListeners();
-
-    _templatesSubscription?.cancel();
-    _templatesSubscription =
-        _templateService.getTemplates().listen((templates) {
-      _templates = templates;
-      _isLoadingTemplates = false;
-      notifyListeners();
-    }, onError: (error) {
-      _isLoadingTemplates = false;
-      _errorMessage = 'Error loading templates: $error';
-      notifyListeners();
-    });
-  }
-
-  /// Load user document requests
-  void _loadUserRequests() {
-    _isLoadingRequests = true;
-    notifyListeners();
-
-    _userRequestsSubscription?.cancel();
-    _userRequestsSubscription =
-        _requestService.getUserRequests(currentUser.uid).listen((requests) {
-      _userRequests = requests;
-      _isLoadingRequests = false;
-      notifyListeners();
-    }, onError: (error) {
-      _isLoadingRequests = false;
-      _errorMessage = 'Error loading requests: $error';
-      notifyListeners();
-    });
-  }
-
-  /// Load user generated documents
-  void _loadUserDocuments() {
-    _isLoadingDocuments = true;
-    notifyListeners();
-
-    _userDocumentsSubscription?.cancel();
-    _userDocumentsSubscription =
-        _documentService.getUserDocuments(currentUser.uid).listen((documents) {
-      _userDocuments = documents;
-      _isLoadingDocuments = false;
-      notifyListeners();
-    }, onError: (error) {
-      _isLoadingDocuments = false;
-      _errorMessage = 'Error loading documents: $error';
-      notifyListeners();
-    });
-  }
-
-  /// Load documents shared with the user
-  void _loadSharedDocuments() {
-    _isLoadingShared = true;
-    notifyListeners();
-
-    _sharedDocumentsSubscription?.cancel();
-    _sharedDocumentsSubscription = _documentService
-        .getSharedDocuments(currentUser.uid)
-        .listen((documents) {
-      _sharedDocuments = documents;
-      _isLoadingShared = false;
-      notifyListeners();
-    }, onError: (error) {
-      _isLoadingShared = false;
-      _errorMessage = 'Error loading shared documents: $error';
-      notifyListeners();
-    });
-  }
-
-  /// Select a template
-  void selectTemplate(String templateId) {
-    final selected = _templates.firstWhere(
-      (template) => template.id == templateId,
-      orElse: () => throw Exception('Template not found'),
-    );
-
-    _selectedTemplate = selected;
-    notifyListeners();
-  }
-
-  /// Clear selected template
-  void clearSelectedTemplate() {
-    _selectedTemplate = null;
-    notifyListeners();
-  }
-
-  /// Submit document request
-  Future<void> submitDocumentRequest({
-    required String templateId,
-    required Map<String, dynamic> formData,
-    required String privacyOption,
-    List<String>? sharedWith,
-  }) async {
-    try {
-      _isSubmitting = true;
-      _errorMessage = null;
-      notifyListeners();
-
-      await _requestService.createDocumentRequest(
-        userId: currentUser.uid,
-        userName: currentUser.displayName,
-        templateId: templateId,
-        formData: formData,
-        privacyOption: privacyOption,
-        sharedWith: sharedWith,
-      );
-
-      _isSubmitting = false;
-      notifyListeners();
-    } catch (error) {
-      _isSubmitting = false;
-      _errorMessage = 'Error submitting request: $error';
-      notifyListeners();
-      rethrow;
-    }
-  }
-
-  /// Clear error message
-  void clearError() {
-    _errorMessage = null;
-    notifyListeners();
-  }
-
-  /// Get a document template by ID
-  DocumentTemplate? getTemplateById(String? templateId) {
-    if (templateId == null) return null;
-
-    try {
-      return _templates.firstWhere((template) => template.id == templateId);
-    } catch (e) {
-      return null;
-    }
   }
 }

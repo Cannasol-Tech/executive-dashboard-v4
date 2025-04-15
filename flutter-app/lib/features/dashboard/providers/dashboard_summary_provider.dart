@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
-import '../../models/dashboard_summary.dart';
-import '../../services/firestore_service.dart';
+import '../models/dashboard_summary.dart';
+import '../../../core/services/firestore_service.dart';
 
 /// Provider for dashboard summary data
 class DashboardSummaryProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
-  
+
   DashboardSummary _summaryData = DashboardSummary.empty();
   bool _isLoading = false;
   String? _error;
@@ -29,7 +29,7 @@ class DashboardSummaryProvider with ChangeNotifier {
         _summaryData = await _firestoreService.getDashboardSummary();
         // If the returned data is empty (which means the document doesn't exist),
         // create sample data instead
-        if (_summaryData.customerCount == 0 && 
+        if (_summaryData.customerCount == 0 &&
             _summaryData.revenueCurrent == 0.0) {
           _summaryData = _createSampleData();
         }
@@ -45,7 +45,7 @@ class DashboardSummaryProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   /// Creates sample dashboard data for development and testing
   DashboardSummary _createSampleData() {
     return DashboardSummary(
@@ -60,4 +60,4 @@ class DashboardSummaryProvider with ChangeNotifier {
       lastUpdated: DateTime.now(),
     );
   }
-} 
+}

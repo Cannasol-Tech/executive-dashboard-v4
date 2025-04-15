@@ -1,5 +1,4 @@
 import 'package:executive_dashboard/config/app_theme.dart';
-import 'package:executive_dashboard/features/document_generator/%20providers/document_generator_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/document_request.dart';
@@ -81,12 +80,6 @@ class _DocumentsScreenState extends State<DocumentsScreen>
     if (_tabController.index != 1) return const SizedBox.shrink();
 
     final user = Provider.of<UserModel>(context);
-
-    // Hide if user doesn't have the necessary permission
-    // You can implement permission checking based on your app's requirements
-    bool hasUploadPermission = true; // For demo, we allow all users
-
-    if (!hasUploadPermission) return const SizedBox.shrink();
 
     return FloatingActionButton(
       onPressed: () async {
@@ -191,8 +184,6 @@ class _DocumentsScreenState extends State<DocumentsScreen>
     return ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        if (provider.errorMessage != null)
-          _buildErrorMessage(context, provider.errorMessage!, provider),
         Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -323,6 +314,7 @@ class _DocumentsScreenState extends State<DocumentsScreen>
       case DocumentRequestStatus.completed:
         backgroundColor = AppTheme.successEmerald;
         textColor = AppTheme.textPrimaryColor;
+        label = 'Completed';
         break;
       case DocumentRequestStatus.failed:
         backgroundColor = AppTheme.errorRuby;
@@ -343,37 +335,6 @@ class _DocumentsScreenState extends State<DocumentsScreen>
               color: textColor,
               fontWeight: FontWeight.w500,
             ),
-      ),
-    );
-  }
-
-  Widget _buildErrorMessage(BuildContext context, String message,
-      DocumentGeneratorProvider provider) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.errorRuby.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.errorRuby),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.error_outline, color: AppTheme.errorRuby),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(color: AppTheme.errorRuby),
-            ),
-          ),
-          IconButton(
-            icon: Icon(Icons.close, color: AppTheme.errorRuby),
-            onPressed: provider.clearError,
-            tooltip: 'Dismiss',
-          ),
-        ],
       ),
     );
   }
@@ -401,8 +362,8 @@ class _DocumentsScreenState extends State<DocumentsScreen>
       ),
       child: CircleAvatar(
         backgroundImage:
-            user.photoURL != null ? NetworkImage(user.photoURL!) : null,
-        child: user.photoURL == null ? Text(user.displayName[0]) : null,
+            user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
+        child: user.photoUrl == null ? Text(user.displayName[0]) : null,
       ),
       itemBuilder: (context) => [
         PopupMenuItem(

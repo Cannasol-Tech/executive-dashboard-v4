@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/document_request.dart';
 import '../models/generated_document.dart';
-import '../ providers/document_generator_provider.dart';
+import '../providers/document_generator_provider.dart';
 import 'document_card.dart';
 
 class SharedDocumentsList extends StatefulWidget {
@@ -111,7 +111,7 @@ class _SharedDocumentsListState extends State<SharedDocumentsList> {
           ElevatedButton(
             onPressed: () {
               // Switch to the New Request tab
-              DefaultTabController.of(context)?.animateTo(0);
+              DefaultTabController.of(context).animateTo(0);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.emeraldGleam,

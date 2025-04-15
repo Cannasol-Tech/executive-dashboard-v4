@@ -5,28 +5,29 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class SecureStorageService {
   // Flutter secure storage instance with secure options
   late final FlutterSecureStorage _storage;
-  
+
   // Key for storing authentication token
   static const String _authTokenKey = 'auth_token';
-  
+
   // Key for storing refresh token
   static const String _refreshTokenKey = 'refresh_token';
-  
+
   // Key for storing user ID
   static const String _userIdKey = 'user_id';
-  
+
   // Key for storing user email
   static const String _userEmailKey = 'user_email';
-  
+
   // Key for storing last login time
   static const String _lastLoginTimeKey = 'last_login_time';
 
   // Singleton instance
-  static final SecureStorageService _instance = SecureStorageService._internal();
-  
+  static final SecureStorageService _instance =
+      SecureStorageService._internal();
+
   // Factory constructor
   factory SecureStorageService() => _instance;
-  
+
   // Private constructor
   SecureStorageService._internal() {
     // Initialize storage differently based on platform
@@ -62,7 +63,7 @@ class SecureStorageService {
       if (!kIsWeb) rethrow;
     }
   }
-  
+
   // Get authentication token
   Future<String?> getAuthToken() async {
     try {
@@ -72,7 +73,7 @@ class SecureStorageService {
       return null;
     }
   }
-  
+
   // Store refresh token
   Future<void> storeRefreshToken(String token) async {
     try {
@@ -82,7 +83,7 @@ class SecureStorageService {
       if (!kIsWeb) rethrow;
     }
   }
-  
+
   // Get refresh token
   Future<String?> getRefreshToken() async {
     try {
@@ -92,7 +93,7 @@ class SecureStorageService {
       return null;
     }
   }
-  
+
   // Store user ID
   Future<void> storeUserId(String userId) async {
     try {
@@ -102,7 +103,7 @@ class SecureStorageService {
       if (!kIsWeb) rethrow;
     }
   }
-  
+
   // Get user ID
   Future<String?> getUserId() async {
     try {
@@ -112,7 +113,7 @@ class SecureStorageService {
       return null;
     }
   }
-  
+
   // Store user email
   Future<void> storeUserEmail(String email) async {
     try {
@@ -122,7 +123,7 @@ class SecureStorageService {
       if (!kIsWeb) rethrow;
     }
   }
-  
+
   // Get user email
   Future<String?> getUserEmail() async {
     try {
@@ -132,7 +133,7 @@ class SecureStorageService {
       return null;
     }
   }
-  
+
   // Store last login time
   Future<void> storeLastLoginTime() async {
     try {
@@ -143,7 +144,7 @@ class SecureStorageService {
       if (!kIsWeb) rethrow;
     }
   }
-  
+
   // Get last login time
   Future<DateTime?> getLastLoginTime() async {
     try {
@@ -157,7 +158,7 @@ class SecureStorageService {
       return null;
     }
   }
-  
+
   // Clear all secure storage
   Future<void> clearStorage() async {
     try {
@@ -167,7 +168,7 @@ class SecureStorageService {
       if (!kIsWeb) rethrow;
     }
   }
-  
+
   // Clear authentication data only (for logout)
   Future<void> clearAuthData() async {
     try {
@@ -178,7 +179,7 @@ class SecureStorageService {
       if (!kIsWeb) rethrow;
     }
   }
-  
+
   // Check if user has stored authentication data
   Future<bool> hasAuthData() async {
     try {
@@ -189,4 +190,4 @@ class SecureStorageService {
       return false;
     }
   }
-} 
+}

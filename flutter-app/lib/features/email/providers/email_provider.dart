@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import '../../models/email.dart';
-import '../../models/email_task.dart';
-import '../../services/email_service.dart';
+import '../models/email.dart';
+import '../models/email_task.dart';
+import '../services/email_service.dart';
 
 /// Provider class for managing email state
 class EmailProvider with ChangeNotifier {

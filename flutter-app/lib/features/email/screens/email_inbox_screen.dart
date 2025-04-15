@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/email_provider.dart';
 import '../widgets/email_actions_panel.dart';
-import '../email.dart';
+import '../models/email.dart';
 import '../widgets/email_list_item.dart';
 
 class EmailInboxScreen extends StatefulWidget {

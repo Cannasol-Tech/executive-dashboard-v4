@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/document_request.dart';
 import '../models/document_template.dart';
 import '../models/generator_status.dart';
-import '../ providers/document_generator_provider.dart';
+import '../providers/document_generator_provider.dart';
 
 class DocumentRequestForm extends StatefulWidget {
   const DocumentRequestForm({Key? key}) : super(key: key);
@@ -755,33 +755,32 @@ class _DocumentRequestFormState extends State<DocumentRequestForm> {
               borderRadius: BorderRadius.circular(4),
             ),
           ),
-          if (status.message != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 24),
-              child: Card(
-                color: AppTheme.secondaryColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        color: AppTheme.infoSapphire,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          status.message!,
-                          style: TextStyle(
-                            color: AppTheme.infoSapphire,
-                          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 24),
+            child: Card(
+              color: AppTheme.secondaryColor,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: AppTheme.infoSapphire,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        status.message!,
+                        style: TextStyle(
+                          color: AppTheme.infoSapphire,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
@@ -841,7 +840,7 @@ class _DocumentRequestFormState extends State<DocumentRequestForm> {
               ElevatedButton(
                 onPressed: () {
                   // Switch to the My Documents tab
-                  DefaultTabController.of(context)?.animateTo(1);
+                  DefaultTabController.of(context).animateTo(1);
                   setState(() {
                     _submittedRequestId = null;
                   });

@@ -1,7 +1,7 @@
-import 'package:executive_dashboard/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
-import 'secure_storage_service.dart';
+import '../../../core/services/secure_storage_service.dart';
+import '../models/user_model.dart';
 import 'auth_service_interface.dart';
 
 /// Authentication service for the Cannasol Executive Dashboard

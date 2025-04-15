@@ -1,6 +1,6 @@
 import 'package:executive_dashboard/config/app_theme.dart';
 import 'package:flutter/material.dart';
-import '../email_task.dart';
+import '../models/email_task.dart';
 
 class TaskItemWidget extends StatefulWidget {
   final EmailTask task;

@@ -1,5 +1,5 @@
 import 'package:executive_dashboard/config/app_theme.dart';
-import 'package:executive_dashboard/features/document_generator/%20providers/document_generator_provider.dart';
+import 'package:executive_dashboard/features/document_generator/providers/document_generator_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -107,7 +107,7 @@ class _GeneratedDocumentsListState extends State<GeneratedDocumentsList> {
           ElevatedButton(
             onPressed: () {
               // Switch to the New Request tab
-              DefaultTabController.of(context)?.animateTo(0);
+              DefaultTabController.of(context).animateTo(0);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
