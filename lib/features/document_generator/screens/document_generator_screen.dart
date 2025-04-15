@@ -28,7 +28,7 @@ class _DocumentGeneratorScreenState extends State<DocumentGeneratorScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<DocumentGeneratorProvider>(context, listen: false);
-      provider.init();
+      provider.maybeStartFetching();
     });
   }
 

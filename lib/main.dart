@@ -21,7 +21,7 @@ import 'features/shared/screens/coming_soon_screen.dart';
 import 'features/document_generator/screens/documents_screen.dart'; 
 import 'features/document_generator/providers/document_generator_provider.dart';
 import 'features/auth/services/auth_service.dart'; // Added import for AuthService
-
+import 'core/auth/auth_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,7 +57,6 @@ void main() async {
   runApp(MyApp(firebaseInitialized: firebaseInitialized));
 }
 
-
 class MyApp extends StatelessWidget {
   final bool firebaseInitialized;
 
@@ -92,24 +91,19 @@ class MyApp extends StatelessWidget {
             initialRoute: '/',
             routes: {
               '/': (context) => firebaseInitialized
-                  ? const AuthWrapper()
+                  ? AuthWrapper(child: const DashboardScreen())
                   : const FirebaseErrorScreen(),
               '/login': (context) => const LoginScreen(),
               '/register': (context) => const RegisterScreen(),
-              '/dashboard': (context) => const DashboardScreen(),
-              '/analysis': (context) => const AnalysisScreen(),
-              '/email': (context) => const EmailInboxScreen(),
-              '/documents': (context) => const DocumentsScreen(), // Updated route
-              '/chat': (context) =>
-                  const ComingSoonScreen(featureName: 'Chat Interface'),
-              '/ai-tasks': (context) =>
-                  const ComingSoonScreen(featureName: 'AI Task Analytics'),
-              '/seo': (context) =>
-                  const ComingSoonScreen(featureName: 'SEO Management'),
-              '/blog': (context) =>
-                  const ComingSoonScreen(featureName: 'Blog Management'),
-              '/settings': (context) =>
-                  const ComingSoonScreen(featureName: 'Settings'),
+              '/dashboard': (context) => AuthWrapper(child: const DashboardScreen()),
+              '/analysis': (context) => AuthWrapper(child: const AnalysisScreen()),
+              '/email': (context) => AuthWrapper(child: const EmailInboxScreen()),
+              '/documents': (context) => AuthWrapper(child: const DocumentsScreen()), 
+              '/chat': (context) => AuthWrapper(child: const ComingSoonScreen(featureName: 'Chat Interface')),
+              '/ai-tasks': (context) => AuthWrapper(child: const ComingSoonScreen(featureName: 'AI Task Analytics')),
+              '/seo': (context) => AuthWrapper(child: const ComingSoonScreen(featureName: 'SEO Management')),
+              '/blog': (context) => AuthWrapper(child: const ComingSoonScreen(featureName: 'Blog Management')),
+              '/settings': (context) => AuthWrapper(child: const ComingSoonScreen(featureName: 'Settings')),
             },
           );
         },
@@ -119,8 +113,12 @@ class MyApp extends StatelessWidget {
 }
 
 /// Wrapper widget that handles authentication state
+  /// A wrapper widget that handles authentication state
+  /// and directs users to either the login screen or the child widget
 class AuthWrapper extends StatefulWidget {
-  const AuthWrapper({Key? key}) : super(key: key);
+  const AuthWrapper({Key? key, required this.child}) : super(key: key);
+
+  final Widget child;
 
   @override
   _AuthWrapperState createState() => _AuthWrapperState();

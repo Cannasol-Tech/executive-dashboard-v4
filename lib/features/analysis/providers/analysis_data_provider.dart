@@ -24,7 +24,7 @@ class AnalysisDataProvider with ChangeNotifier {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.isAuthenticated) {
       if (_analysisStreamSubscription == null) {
-        _listenToAnalysisData();
+        _listenToAnalysisData(context);
       }
     } else {
       // If user logs out, stop listening
@@ -35,7 +35,9 @@ class AnalysisDataProvider with ChangeNotifier {
     }
   }
 
-  void _listenToAnalysisData() {
+  void _listenToAnalysisData(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!authProvider.isAuthenticated) return;
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -65,12 +67,13 @@ class AnalysisDataProvider with ChangeNotifier {
   }
 
   // Optional: Method to force a refresh (useful for pull-to-refresh)
-  Future<void> refreshAnalysisData() async {
+  /// Optional: Method to force a refresh (useful for pull-to-refresh)
+  Future<void> refreshAnalysisData(BuildContext context) async {
     // Although we use a stream, a manual fetch might be desired sometimes
     // For now, just ensure the stream listener is active
     if (_analysisStreamSubscription == null ||
         _analysisStreamSubscription!.isPaused) {
-      _listenToAnalysisData();
+      _listenToAnalysisData(context);
     }
     // If you wanted a one-time fetch instead of relying purely on the stream:
     /*

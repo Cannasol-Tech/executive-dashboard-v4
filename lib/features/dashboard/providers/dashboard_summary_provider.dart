@@ -39,10 +39,11 @@ class DashboardSummaryProvider with ChangeNotifier {
     }
   }
   
+  /// Initialize Firestore service, but do not fetch data here (no context)
   void _initializeServices() {
     try {
       _firestoreService = FirestoreService();
-      fetchSummaryData();
+      // Do not call fetchSummaryData here; must be called from maybeStartFetching with context
     } catch (e) {
       print('Error initializing Firebase services: $e');
       _error = 'Failed to initialize services';
@@ -58,7 +59,9 @@ class DashboardSummaryProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchSummaryData() async {
+  Future<void> fetchSummaryData(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!authProvider.isAuthenticated) return;
     _isLoading = true;
     _error = null;
     notifyListeners();

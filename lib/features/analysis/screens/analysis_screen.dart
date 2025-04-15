@@ -161,7 +161,7 @@ class AnalysisScreen extends StatelessWidget {
                 : const Icon(Icons.refresh,
                     key: ValueKey('refresh'), color: AppTheme.moonlight),
           ),
-          onPressed: isLoading ? null : () => provider.refreshAnalysisData(),
+          onPressed: isLoading ? null : () => provider.refreshAnalysisData(context),
           tooltip: 'Refresh Data',
         );
       },
@@ -264,7 +264,7 @@ class AnalysisScreen extends StatelessWidget {
                 ),
                 onPressed: () =>
                     Provider.of<AnalysisDataProvider>(context, listen: false)
-                        .refreshAnalysisData(),
+                        .refreshAnalysisData(context),
               ),
             ],
           ),
@@ -290,7 +290,7 @@ class AnalysisScreen extends StatelessWidget {
         backgroundColor: AppTheme.deepOcean,
         onRefresh: () =>
             Provider.of<AnalysisDataProvider>(context, listen: false)
-                .refreshAnalysisData(),
+                .refreshAnalysisData(context),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(20.0),

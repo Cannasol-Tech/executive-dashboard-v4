@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../features/auth/providers/auth_provider.dart';
+import '../../features/auth/screens/login_screen.dart';
 
 /// A wrapper widget that handles authentication state
 /// and directs users to either the login screen or the child widget
@@ -11,17 +12,19 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<AuthProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
 
-    // For now, always show the child since we're initializing the app
-    // Later, this would check authentication state and redirect if needed
-    return child;
+    if (authProvider.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
-    // Uncomment once auth functionality is implemented
-    /*
-    return authProvider.isAuthenticated
-        ? child
-        : const LoginScreen();
-    */
+    if (authProvider.isAuthenticated) {
+      return child;
+    } else {
+      // Only allow login screen before authentication
+      return const LoginScreen();
+    }
   }
 }

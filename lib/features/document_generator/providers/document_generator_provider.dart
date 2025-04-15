@@ -70,11 +70,10 @@ class DocumentGeneratorProvider extends ChangeNotifier {
   bool get hasSelectedTemplate => _selectedTemplate != null;
   UserModel get currentUser => _authService.currentUser;
 
-  DocumentGeneratorProvider({required UserModel currentUser}) {
-    init();
-  }
+  DocumentGeneratorProvider({required UserModel currentUser});
 
-  void init() {
+  /// Call this after authentication is confirmed to start fetching data
+  void maybeStartFetching() {
     fetchTemplates();
     fetchUserDocuments();
     fetchSharedDocuments();

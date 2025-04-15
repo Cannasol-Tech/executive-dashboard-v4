@@ -51,10 +51,10 @@
     "rules": "database.rules.json"
   },
   "firestore": {
-    "rules": "flutter-app/firestore.rules",
-    "indexes": "flutter-app/firestore.indexes.json"
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   },
   "storage": {
-    "rules": "flutter-app/storage.rules"
+    "rules": "storage.rules"
   }
 }
