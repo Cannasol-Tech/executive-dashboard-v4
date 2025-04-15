@@ -22,38 +22,30 @@ import 'features/document_generator/screens/documents_screen.dart';
 import 'features/document_generator/providers/document_generator_provider.dart';
 import 'features/auth/services/auth_service.dart'; // Added import for AuthService
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  bool firebaseInitialized = false;
 
+  bool firebaseInitialized = false;
   try {
+    await Firebase.initializeApp(
+      name: 'cannasolDashboard',
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    firebaseInitialized = true;
+    print('Firebase initialized successfully with name: cannasolDashboard');
+
     // Initialize environment configuration
     final env = EnvConfigService();
     await env.initialize(env: kReleaseMode ? 'production' : 'development');
-    print('Environment configuration initialized: ${env.currentEnvironment}');
-
-  // First try to initialize the default Firebase app instance
-    // Fallback to named instance if default fails
-    try {
-      print('Trying to initialize Firebase with custom name...');
-      await Firebase.initializeApp(
-        name: 'cannasolDashboard',
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      print('Firebase initialized successfully with name: cannasolDashboard');
-      firebaseInitialized = true;
-    } catch (e) {
-      print('Error initializing Firebase with custom name: $e');
-      firebaseInitialized = false;
-    }
-
+    print('Environment configuration initialized: [32m${env.currentEnvironment}[0m');
   } catch (e) {
     print('Failed to initialize services: $e');
   }
 
   // Initialize the theme system
   await initializeTheme();
-  
+
   // Set system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -61,9 +53,10 @@ void main() async {
       systemNavigationBarColor: Colors.transparent,
     ),
   );
-  
+
   runApp(MyApp(firebaseInitialized: firebaseInitialized));
 }
+
 
 class MyApp extends StatelessWidget {
   final bool firebaseInitialized;
@@ -210,9 +203,21 @@ class _AuthWrapperState extends State<AuthWrapper> {
     }
 
     // Navigate based on authentication status
-    return authProvider.isAuthenticated
-        ? const DashboardScreen()
-        : const LoginScreen();
+    if (authProvider.isAuthenticated) {
+  // Start Firestore listeners only after login
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Provider.of<AnalysisDataProvider>(context, listen: false).maybeStartListening(context);
+    Provider.of<DashboardSummaryProvider>(context, listen: false).maybeStartFetching(context);
+  });
+  return const DashboardScreen();
+} else {
+  // Optionally stop listeners on logout
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Provider.of<AnalysisDataProvider>(context, listen: false).maybeStartListening(context);
+    Provider.of<DashboardSummaryProvider>(context, listen: false).maybeStartFetching(context);
+  });
+  return const LoginScreen();
+}
   }
 }
 

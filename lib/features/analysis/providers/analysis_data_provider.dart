@@ -3,6 +3,9 @@ import 'dart:async';
 import '../models/analysis_data.dart';
 import '../../../core/services/firestore_service.dart';
 
+import 'package:provider/provider.dart';
+import '../../auth/providers/auth_provider.dart';
+
 class AnalysisDataProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
   AnalysisData _analysisData = AnalysisData.empty();
@@ -14,8 +17,22 @@ class AnalysisDataProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  AnalysisDataProvider() {
-    _listenToAnalysisData();
+  AnalysisDataProvider(); // Remove auto-fetch on construction
+
+  /// Call this after authentication is confirmed, passing the BuildContext
+  void maybeStartListening(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.isAuthenticated) {
+      if (_analysisStreamSubscription == null) {
+        _listenToAnalysisData();
+      }
+    } else {
+      // If user logs out, stop listening
+      _analysisStreamSubscription?.cancel();
+      _analysisStreamSubscription = null;
+      _analysisData = AnalysisData.empty();
+      notifyListeners();
+    }
   }
 
   void _listenToAnalysisData() {

@@ -1,4 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../models/dashboard_summary.dart';
 import '../../../core/services/firestore_service.dart';
 
@@ -17,12 +20,22 @@ class DashboardSummaryProvider with ChangeNotifier {
 
   DashboardSummaryProvider({bool firebaseInitialized = false}) {
     _firebaseInitialized = firebaseInitialized;
-    // Only initialize Firebase services if Firebase is initialized
-    if (_firebaseInitialized) {
-      _initializeServices();
+    // Do not auto-fetch in constructor. Wait for explicit call after auth.
+    _summaryData = _createSampleData();
+  }
+  
+  /// Call this after authentication is confirmed, passing the BuildContext
+  void maybeStartFetching(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.isAuthenticated) {
+      if (_firestoreService == null) {
+        _initializeServices();
+      }
     } else {
-      // Use sample data when Firebase isn't available
+      // If user logs out, clear data
+      _firestoreService = null;
       _summaryData = _createSampleData();
+      notifyListeners();
     }
   }
   

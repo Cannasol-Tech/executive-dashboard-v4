@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../../features/analysis/models/analysis_data.dart';
 import '../../features/dashboard/models/dashboard_summary.dart'; // Import the new model
 // Import other models as needed
 
 class FirestoreService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instanceFor(app: Firebase.app('cannasolDashboard'));
 
   // --- Analysis Data ---
 

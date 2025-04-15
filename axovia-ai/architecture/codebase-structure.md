@@ -329,11 +329,6 @@ This document provides an **extensive definition** of every major directory and 
 - **Content**: Integration details, authentication methods, and usage examples
 - **Usage**: Guide for implementing external service connections
 
-### logic/
-
-- **Purpose**: axovia-ai/ logic patterns
-- **Content**: Algorithms, decision trees, and pattern implementations
-- **Usage**: Reference for implementing consistent axovia-ai/ behaviors
 
 ## Development Workflow
 
